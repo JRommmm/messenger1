@@ -5,9 +5,9 @@ const logger = require("morgan");
 const passport = require("passport");
 const session = require("express-session");
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
-
 const db = require("./db");
 const { User } = require("./db/models");
+// create store for sessions to persist in database
 const sessionStore = new SequelizeStore({ db });
 
 const { json, urlencoded } = express;
@@ -42,6 +42,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// require api routes here after I create them
 app.use("/auth", require("./routes/auth"));
 
 // catch 404 and forward to error handler
@@ -51,7 +52,6 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  console.log(err);
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
