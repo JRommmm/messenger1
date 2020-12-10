@@ -13,3 +13,9 @@ npm run seed
 
 npm run dev
 ```
+
+Create a .env file in the server directory and add your session secret
+
+```
+SESSION_SECRET = "your session secret"
+```
