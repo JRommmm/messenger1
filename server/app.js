@@ -1,24 +1,48 @@
 const createError = require("http-errors");
 const express = require("express");
 const { join } = require("path");
-const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const passport = require("passport");
+const session = require("express-session");
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
-const indexRouter = require("./routes/index");
-const pingRouter = require("./routes/ping");
+const db = require("./db");
+const { User } = require("./db/models");
+const sessionStore = new SequelizeStore({ db });
 
 const { json, urlencoded } = express;
 
 var app = express();
 
+// passport registration
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findByPk(id);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
+});
+
 app.use(logger("dev"));
 app.use(json());
 app.use(urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(join(__dirname, "public")));
 
-app.use("/", indexRouter);
-app.use("/ping", pingRouter);
+// session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    store: sessionStore,
+    saveUninitialized: false
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use("/auth", require("./routes/auth"));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -27,6 +51,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
+  console.log(err);
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -36,4 +61,4 @@ app.use(function (err, req, res, next) {
   res.json({ error: err });
 });
 
-module.exports = app;
+module.exports = { app, sessionStore };

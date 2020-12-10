@@ -7,7 +7,7 @@ require("dotenv").config();
  * Module dependencies.
  */
 
-var app = require("../app");
+const { app, sessionStore } = require("../app");
 var http = require("http");
 var db = require("../db");
 
@@ -28,11 +28,15 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces, and sync database.
  */
 
-db.sync().then(function () {
-  server.listen(port);
-  server.on("error", onError);
-  server.on("listening", onListening);
-});
+// Not sure where to sync session store....putting it here for now
+sessionStore
+  .sync()
+  .then(() => db.sync())
+  .then(() => {
+    server.listen(port);
+    server.on("error", onError);
+    server.on("listening", onListening);
+  });
 
 /**
  * Normalize a port into a number, string, or false.
