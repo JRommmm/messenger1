@@ -1,7 +1,15 @@
-# Express Starter
+## Running Application Locally
 
-This starter repo will be used for building applications using React, Material-UI, React-Router, Node, & Express.js.
+```
+psql
+CREATE  DATABASE messenger;
+\q
 
-## Getting started
+cd server
+npm install
 
-The project is broken down into a client and server folder.
+// seed the database
+npm run seed
+
+npm run dev
+```
