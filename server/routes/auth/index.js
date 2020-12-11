@@ -66,7 +66,11 @@ router.delete("/logout", (req, res, next) => {
 });
 
 router.get("/user", (req, res, next) => {
-  res.json(req.user);
+  if (req.user) {
+    return res.json(req.user);
+  } else {
+    return res.json({});
+  }
 });
 
 module.exports = router;

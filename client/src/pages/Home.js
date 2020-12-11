@@ -12,7 +12,7 @@ const Home = (props) => {
 
   const handleLogout = async () => {
     await logout();
-    props.history.push("/register");
+    props.history.push("/login");
   };
 
   return (
