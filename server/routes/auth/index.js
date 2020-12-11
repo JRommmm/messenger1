@@ -6,21 +6,26 @@ router.post("/register", async (req, res, next) => {
     // expects {username, email, password} in req.body
     const { username, password, email } = req.body;
 
-    if (!username || !password || !email)
+    if (!username || !password || !email) {
       return res.status(400).json({ error: "Username, password, and email required" });
-    if (password.length < 6)
+    }
+
+    if (password.length < 6) {
       return res.status(400).json({ error: "Password must be at least 6 characters" });
+    }
 
     const user = await User.create(req.body);
 
     req.login(user, (error) => {
       if (error) next(error);
-      else res.status(201).json(user);
+      else return res.status(201).json(user);
     });
   } catch (error) {
-    if (error.name === "SequelizeUniqueConstraintError")
-      res.status(401).json({ error: "User already exists" });
-    else next(error);
+    if (error.name === "SequelizeUniqueConstraintError") {
+      return res.status(401).json({ error: "User already exists" });
+    } else if (error.name === "SequelizeValidationError") {
+      return res.status(401).json({ error: "Validation error" });
+    } else next(error);
   }
 });
 
@@ -41,7 +46,7 @@ router.post("/login", async (req, res, next) => {
       console.log({ error: `No user found for username: ${username}` });
       res.status(401).json({ error: "Wrong username and/or password" });
     } else if (!user.correctPassword(password)) {
-      console.log({ error: `Password incorrect for user: ${username}` });
+      console.log({ error: "Wrong username and/or password" });
       res.status(401).json({ error: "Wrong username and/or password" });
     } else {
       req.login(user, (error) => {
@@ -58,6 +63,10 @@ router.delete("/logout", (req, res, next) => {
   req.logout();
   req.session.destroy();
   res.sendStatus(204);
+});
+
+router.get("/user", (req, res, next) => {
+  res.json(req.user);
 });
 
 module.exports = router;
