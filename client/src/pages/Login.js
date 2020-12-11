@@ -39,7 +39,7 @@ const Login = (props) => {
       <Button type="button" onClick={() => props.history.push("/register")}>
         Create an Account
       </Button>
-      <LoginForm handleSubmit={handleSubmit} errorMessage={errorMessage} />
+      <LoginForm handleSubmit={handleSubmit} />
       <Snackbar
         open={snackBarOpen}
         onClose={() => setSnackBarOpen(false)}

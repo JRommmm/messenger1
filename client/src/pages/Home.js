@@ -1,18 +1,26 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../store/user";
 
 const Home = (props) => {
   const { user, logout } = props;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (user.id) {
+      setIsLoggedIn(true);
+    }
+  }, [user.id]);
 
   if (!user.id) {
+    // If we were previously logged in, redirect to login instead of register
+    if (isLoggedIn) return <Redirect to="/login" />;
     return <Redirect to="/register" />;
   }
 
   const handleLogout = async () => {
     await logout();
-    props.history.push("/login");
   };
 
   return (

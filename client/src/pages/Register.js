@@ -41,7 +41,6 @@ const Register = (props) => {
     return <Redirect to="/home" />;
   }
 
-  console.log(props);
   return (
     <div>
       <Button type="button" onClick={() => props.history.push("/login")}>
