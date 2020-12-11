@@ -22,9 +22,6 @@ const Login = (props) => {
 
   return (
     <div>
-      <Button type="button" onClick={() => props.history.push("/register")}>
-        Create an Account
-      </Button>
       <LoginForm handleSubmit={handleSubmit} />
     </div>
   );

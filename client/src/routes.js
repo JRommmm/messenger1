@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { fetchUser } from "./store/user";
-import Register from "./pages/Register";
-import { Login, Home, SnackbarError } from "./components";
+import { Login, Home, SnackbarError, Auth } from "./components";
 
 const Routes = (props) => {
   const { user, fetchUser } = props;
@@ -39,10 +38,10 @@ const Routes = (props) => {
         />
       )}
       <Switch>
-        <Route exact path="/" component={props.user && props.user.id ? Home : Register} />
+        <Route exact path="/" component={props.user && props.user.id ? Home : Auth} />
         <Route path="/home" component={Home} />
-        <Route path="/register" component={Register} />
-        <Route path="/login" component={Login} />
+        <Route path="/register" render={(props) => <Auth {...props} authType="register" />} />
+        <Route path="/login" render={(props) => <Auth {...props} authType="login" />} />
       </Switch>
     </>
   );

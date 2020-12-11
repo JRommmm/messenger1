@@ -3,9 +3,11 @@ import { Button, Input, InputLabel, FormControl } from "@material-ui/core";
 
 const LoginForm = (props) => {
   const { handleSubmit } = props;
+  console.log(props);
 
   return (
     <form onSubmit={handleSubmit}>
+      <Button onClick={() => props.history.push("/register")}>Create account</Button>
       <FormControl required>
         <InputLabel htmlFor="username">Username</InputLabel>
         <Input name="username" type="text" required />
