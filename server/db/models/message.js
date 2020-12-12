@@ -1,0 +1,21 @@
+const Sequelize = require("sequelize");
+const db = require("../db");
+
+// associated with the sender user
+
+const Message = db.define("message", {
+  text: {
+    type: Sequelize.STRING,
+    allowNull: false
+  },
+  senderId: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  read: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  }
+});
+
+module.exports = Message;
