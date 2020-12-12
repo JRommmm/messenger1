@@ -1,8 +1,10 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import { Button, Input, InputLabel, FormControl, Typography } from "@material-ui/core";
 
 const LoginForm = (props) => {
   const { handleSubmit, classes } = props;
+  const history = useHistory();
 
   return (
     <div className={classes.formContainer}>
@@ -14,7 +16,7 @@ const LoginForm = (props) => {
             size="large"
             style={{ width: 150 }}
             className={classes.topButton}
-            onClick={() => props.history.push("/register")}>
+            onClick={() => history.push("/register")}>
             Create Account
           </Button>
         </div>

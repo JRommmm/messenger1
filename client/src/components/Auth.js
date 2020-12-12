@@ -100,7 +100,7 @@ const Auth = (props) => {
       <Grid item xs={false} sm={false} md={4} className={classes.image} />
       <div className={classes.container}>
         {authType === "login" ? (
-          <LoginForm history={props.history} handleSubmit={handleSubmit} classes={classes} />
+          <LoginForm handleSubmit={handleSubmit} classes={classes} />
         ) : (
           <RegisterForm
             history={props.history}

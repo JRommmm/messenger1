@@ -1,4 +1,5 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import {
   Button,
   Input,
@@ -10,6 +11,7 @@ import {
 
 const RegisterForm = (props) => {
   const { errorMessage, handleSubmit, classes } = props;
+  const history = useHistory();
 
   return (
     <div className={classes.formContainer}>
@@ -20,7 +22,7 @@ const RegisterForm = (props) => {
             variant="contained"
             size="large"
             className={classes.topButton}
-            onClick={() => props.history.push("/login")}>
+            onClick={() => history.push("/login")}>
             Login
           </Button>
         </div>
