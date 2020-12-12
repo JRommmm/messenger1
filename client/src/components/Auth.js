@@ -103,7 +103,6 @@ const Auth = (props) => {
           <LoginForm handleSubmit={handleSubmit} classes={classes} />
         ) : (
           <RegisterForm
-            history={props.history}
             handleSubmit={handleRegister}
             errorMessage={formErrorMessage}
             classes={classes}

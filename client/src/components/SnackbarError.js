@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Snackbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import Close from "@material-ui/icons/Close";
 
 const useStyles = makeStyles((theme) => ({
   snackbar: {
@@ -22,7 +23,7 @@ const SnackbarError = (props) => {
       action={
         <React.Fragment>
           <Button className={classes.x} size="small" onClick={() => props.setSnackBarOpen(false)}>
-            X
+            <Close color="secondary" />
           </Button>
         </React.Fragment>
       }
