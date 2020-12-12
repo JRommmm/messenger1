@@ -5,13 +5,6 @@ import {
   InputLabel,
   FormControl,
   FormHelperText,
-  Avatar,
-  CssBaseline,
-  Checkbox,
-  Link,
-  Paper,
-  Box,
-  Grid,
   Typography
 } from "@material-ui/core";
 
@@ -31,7 +24,6 @@ const RegisterForm = (props) => {
             Login
           </Button>
         </div>
-
         <div className={classes.form}>
           <Typography className={classes.title}>Create an account.</Typography>
           <FormControl margin="normal" required>

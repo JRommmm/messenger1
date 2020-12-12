@@ -2,7 +2,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { login } from "../store/user";
 import { Redirect } from "react-router-dom";
-import { Button } from "@material-ui/core";
 import { LoginForm } from "../components";
 
 const Login = (props) => {

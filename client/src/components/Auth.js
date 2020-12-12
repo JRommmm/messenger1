@@ -2,17 +2,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { register, login } from "../store/user";
 import { Redirect } from "react-router-dom";
-import {
-  Button,
-  Avatar,
-  CssBaseline,
-  Checkbox,
-  Link,
-  Paper,
-  Box,
-  Grid,
-  Typography
-} from "@material-ui/core";
+import { CssBaseline, Grid } from "@material-ui/core";
 import { RegisterForm, LoginForm } from "../components";
 import { makeStyles } from "@material-ui/core/styles";
 import Image from "../assets/bg-img.png";
@@ -22,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh"
   },
   image: {
-    backgroundImage: `url(${Image})`,
+    backgroundImage: `linear-gradient(to bottom, #3A8DFF55, #86B9FF55), url(${Image})`,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
     backgroundPosition: "center"
@@ -33,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1
   },
   formContainer: {
-    flexGrow: 1,
     alignItems: "center"
   },
   form: {
@@ -43,7 +32,6 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 60,
     marginTop: 100,
     width: 300
-    // alignItems: "center"
   },
   nav: {
     display: "flex",
@@ -109,11 +97,10 @@ const Auth = (props) => {
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={false} sm={4} md={5} className={classes.image} />
-      {/* <Grid item> */}
+      <Grid item xs={false} sm={false} md={4} className={classes.image} />
       <div className={classes.container}>
         {authType === "login" ? (
-          <LoginForm history={props.history} handleSubmit={handleSubmit} />
+          <LoginForm history={props.history} handleSubmit={handleSubmit} classes={classes} />
         ) : (
           <RegisterForm
             history={props.history}
@@ -123,7 +110,6 @@ const Auth = (props) => {
           />
         )}
       </div>
-      {/* </Grid> */}
     </Grid>
   );
 };
