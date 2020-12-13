@@ -3,6 +3,7 @@ import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { fetchUser } from "./store/user";
 import { Login, Home, SnackbarError, Auth } from "./components";
+import { LOGIN, REGISTER } from "./constants";
 
 const Routes = (props) => {
   const { user, fetchUser } = props;
@@ -40,8 +41,8 @@ const Routes = (props) => {
       <Switch>
         <Route exact path="/" component={props.user && props.user.id ? Home : Auth} />
         <Route path="/home" component={Home} />
-        <Route path="/register" render={(props) => <Auth {...props} authType="register" />} />
-        <Route path="/login" render={(props) => <Auth {...props} authType="login" />} />
+        <Route path="/register" render={(props) => <Auth {...props} authPage={REGISTER} />} />
+        <Route path="/login" render={(props) => <Auth {...props} authPage={LOGIN} />} />
       </Switch>
     </>
   );

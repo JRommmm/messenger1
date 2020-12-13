@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { connect } from "react-redux";
-import { register, login } from "../store/user";
 import { Redirect } from "react-router-dom";
-import { CssBaseline, Grid } from "@material-ui/core";
-import { RegisterForm, LoginForm } from "../components";
+import { connect } from "react-redux";
+import { CssBaseline, Grid, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { FormContainer } from "../components";
 import Image from "../assets/bg-img.png";
+import { ReactComponent as ChatIcon } from "../assets/chat-bubble.svg";
+import { LOGIN } from "../constants";
+import { register, login } from "../store/user";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -19,51 +21,17 @@ const useStyles = makeStyles((theme) => ({
   },
   container: {
     display: "flex",
-    justifyContent: "center",
     flexGrow: 1
   },
-  formContainer: {
-    alignItems: "center"
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    marginLeft: 100,
-    marginRight: 60,
-    marginTop: 100,
-    width: 300
-  },
-  nav: {
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginRight: 20,
-    marginTop: 15
-  },
-  title: {
-    fontSize: "25px",
-    fontWeight: "bold"
-  },
-  topButton: {
-    color: "#3A8DFF",
-    marginLeft: 20,
-    backgroundColor: "white"
-  },
-  bottomButton: {
-    backgroundColor: "#3A8DFF",
-    color: "white",
-    alignSelf: "center",
-    marginTop: 10
-  },
-  greyText: {
-    color: "grey"
+  overlayText: {
+    fontSize: 26,
+    color: "white"
   }
 }));
 
 const Auth = (props) => {
   const classes = useStyles();
-  const { user, register, login } = props;
-  const { authType } = props;
+  const { user, register, login, authPage } = props;
 
   const [formErrorMessage, setFormErrorMessage] = useState({});
 
@@ -82,7 +50,7 @@ const Auth = (props) => {
     await register({ username, email, password });
   };
 
-  const handleSubmit = async (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
     const username = event.target.username.value;
     const password = event.target.password.value;
@@ -97,15 +65,24 @@ const Auth = (props) => {
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={false} sm={false} md={4} className={classes.image} />
+      <Grid item xs={false} sm={false} md={4} className={classes.image}>
+        <ChatIcon />
+        <Typography className={classes.overlayText}>
+          Converse with anyone with any language
+        </Typography>
+      </Grid>
       <div className={classes.container}>
-        {authType === "login" ? (
-          <LoginForm handleSubmit={handleSubmit} classes={classes} />
+        {authPage === LOGIN ? (
+          <FormContainer
+            authPage={authPage}
+            handleSubmit={handleLogin}
+            errorMessage={formErrorMessage}
+          />
         ) : (
-          <RegisterForm
+          <FormContainer
+            authPage={authPage}
             handleSubmit={handleRegister}
             errorMessage={formErrorMessage}
-            classes={classes}
           />
         )}
       </div>
