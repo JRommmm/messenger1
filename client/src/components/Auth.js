@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { CssBaseline, Grid, Typography } from "@material-ui/core";
+import { CssBaseline, Grid, Typography, Hidden } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { FormContainer } from "../components";
 import Image from "../assets/bg-img.png";
@@ -14,18 +14,28 @@ const useStyles = makeStyles((theme) => ({
     height: "100vh"
   },
   image: {
-    backgroundImage: `linear-gradient(to bottom, #3A8DFF55, #86B9FF55), url(${Image})`,
+    backgroundImage: `linear-gradient(180deg, #3A8DFF 0%, #86B9FF55 100%), url(${Image})`,
+    opacity: 0.85,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
-    backgroundPosition: "center"
+    backgroundPosition: "center",
+    display: "flex",
+    justifyContent: "center"
   },
   container: {
     display: "flex",
     flexGrow: 1
   },
+  overlayContainer: {
+    textAlign: "center",
+    marginTop: 199
+  },
   overlayText: {
     fontSize: 26,
-    color: "white"
+    color: "#FFFFFF"
+  },
+  icon: {
+    marginBottom: 39
   }
 }));
 
@@ -66,10 +76,13 @@ const Auth = (props) => {
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
       <Grid item xs={false} sm={false} md={4} className={classes.image}>
-        <ChatIcon />
-        <Typography className={classes.overlayText}>
-          Converse with anyone with any language
-        </Typography>
+        <Hidden xsDown smDown>
+          <div className={classes.overlayContainer}>
+            <ChatIcon className={classes.icon} />
+            <Typography className={classes.overlayText}>Converse with anyone</Typography>
+            <Typography className={classes.overlayText}>with any language</Typography>
+          </div>
+        </Hidden>
       </Grid>
       <div className={classes.container}>
         {authPage === LOGIN ? (

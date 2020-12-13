@@ -2,7 +2,7 @@ import React from "react";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { LoginForm, RegisterForm, AuthNav } from "../components";
-import { LOGIN } from "../constants";
+import { LOGIN, REGISTER } from "../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -11,12 +11,12 @@ const useStyles = makeStyles((theme) => ({
   form: {
     display: "flex",
     flexDirection: "column",
-    marginLeft: 100,
-    marginTop: 100,
-    width: 300
+    marginLeft: 97,
+    marginTop: 86,
+    width: 380
   },
   title: {
-    fontSize: "25px",
+    fontSize: 26,
     fontWeight: "bold"
   }
 }));
@@ -24,13 +24,21 @@ const useStyles = makeStyles((theme) => ({
 const FormContainer = (props) => {
   const classes = useStyles();
   const { authPage, handleSubmit, errorMessage } = props;
+  let text = "";
+  if (authPage === LOGIN) {
+    text = "Welcome back!";
+  }
+  if (authPage === REGISTER) {
+    text = "Create an account.";
+  }
+  console.log(props);
 
   return (
     <div className={classes.root}>
       <form onSubmit={handleSubmit}>
         <AuthNav authPage={authPage} />
         <div className={classes.form}>
-          <Typography className={classes.title}>Welcome back!</Typography>
+          <Typography className={classes.title}>{text}</Typography>
           {authPage === LOGIN ? (
             <LoginForm errorMessage={errorMessage} />
           ) : (
