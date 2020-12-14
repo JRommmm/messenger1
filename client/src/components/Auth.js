@@ -1,69 +1,47 @@
 import React, { useState } from "react";
-import { connect } from "react-redux";
-import { register, login } from "../store/user";
 import { Redirect } from "react-router-dom";
-import { CssBaseline, Grid } from "@material-ui/core";
-import { RegisterForm, LoginForm } from "../components";
+import { connect } from "react-redux";
+import { CssBaseline, Grid, Typography, Hidden } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { FormContainer } from "../components";
 import Image from "../assets/bg-img.png";
+import { ReactComponent as ChatIcon } from "../assets/chat-bubble.svg";
+import { LOGIN } from "../constants";
+import { register, login } from "../store/user";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh"
   },
   image: {
-    backgroundImage: `linear-gradient(to bottom, #3A8DFF55, #86B9FF55), url(${Image})`,
+    backgroundImage: `linear-gradient(180deg, #3A8DFF 0%, #86B9FF55 100%), url(${Image})`,
+    opacity: 0.85,
     backgroundRepeat: "no-repeat",
     backgroundSize: "cover",
-    backgroundPosition: "center"
+    backgroundPosition: "center",
+    display: "flex",
+    justifyContent: "center"
   },
   container: {
     display: "flex",
-    justifyContent: "center",
     flexGrow: 1
   },
-  formContainer: {
-    alignItems: "center"
+  overlayContainer: {
+    textAlign: "center",
+    marginTop: 199
   },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    marginLeft: 100,
-    marginRight: 60,
-    marginTop: 100,
-    width: 300
+  overlayText: {
+    fontSize: 26,
+    color: "#FFFFFF"
   },
-  nav: {
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    marginRight: 20,
-    marginTop: 15
-  },
-  title: {
-    fontSize: "25px",
-    fontWeight: "bold"
-  },
-  topButton: {
-    color: "#3A8DFF",
-    marginLeft: 20,
-    backgroundColor: "white"
-  },
-  bottomButton: {
-    backgroundColor: "#3A8DFF",
-    color: "white",
-    alignSelf: "center",
-    marginTop: 10
-  },
-  greyText: {
-    color: "grey"
+  icon: {
+    marginBottom: 39
   }
 }));
 
 const Auth = (props) => {
   const classes = useStyles();
-  const { user, register, login } = props;
-  const { authType } = props;
+  const { user, register, login, authPage } = props;
 
   const [formErrorMessage, setFormErrorMessage] = useState({});
 
@@ -82,7 +60,7 @@ const Auth = (props) => {
     await register({ username, email, password });
   };
 
-  const handleSubmit = async (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
     const username = event.target.username.value;
     const password = event.target.password.value;
@@ -97,18 +75,21 @@ const Auth = (props) => {
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
-      <Grid item xs={false} sm={false} md={4} className={classes.image} />
+      <Grid item xs={false} sm={false} md={4} className={classes.image}>
+        <Hidden xsDown smDown>
+          <div className={classes.overlayContainer}>
+            <ChatIcon className={classes.icon} />
+            <Typography className={classes.overlayText}>Converse with anyone</Typography>
+            <Typography className={classes.overlayText}>with any language</Typography>
+          </div>
+        </Hidden>
+      </Grid>
       <div className={classes.container}>
-        {authType === "login" ? (
-          <LoginForm history={props.history} handleSubmit={handleSubmit} classes={classes} />
-        ) : (
-          <RegisterForm
-            history={props.history}
-            handleSubmit={handleRegister}
-            errorMessage={formErrorMessage}
-            classes={classes}
-          />
-        )}
+        <FormContainer
+          authPage={authPage}
+          handleSubmit={authPage === LOGIN ? handleLogin : handleRegister}
+          errorMessage={formErrorMessage}
+        />
       </div>
     </Grid>
   );
