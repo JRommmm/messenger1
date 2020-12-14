@@ -1,15 +1,6 @@
 const db = require("./db");
-const { User, Message, Conversation } = require("./models");
-const { Op } = require("sequelize");
+const { User } = require("./models");
 
-/*include: [
-      {
-        model: User,
-        as: "user1"
-      },
-      { model: User, as: "user2" }
-    ]
-*/
 async function seed() {
   await db.sync({ force: true });
   console.log("db synced!");
@@ -42,29 +33,6 @@ async function seed() {
     })
   ]);
 
-  const message = await Message.create({ text: "test", senderId: users[0].id });
-  const message2 = await Message.create({ text: "teset2", senderId: users[0].id });
-
-  const convo = await Conversation.create({ user1Id: users[0].id, user2Id: users[1].id });
-  const convo2 = await Conversation.create({ user1Id: users[4].id, user2Id: users[0].id });
-  await message.setConversation(convo);
-  await message2.setConversation(convo2);
-  let data = await Conversation.findAll({
-    where: {
-      [Op.or]: {
-        user1Id: users[0].id,
-        user2Id: users[0].id
-      }
-    },
-    include: [
-      {
-        model: User,
-        as: "user1"
-      },
-      { model: User, as: "user2" }
-    ]
-  });
-  console.log(data[0].user1);
   console.log(`seeded ${users.length} users`);
 }
 

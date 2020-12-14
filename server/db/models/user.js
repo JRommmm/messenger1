@@ -16,6 +16,9 @@ const User = db.define("user", {
       isEmail: true
     }
   },
+  photoUrl: {
+    type: Sequelize.STRING
+  },
   password: {
     type: Sequelize.STRING,
     validate: {
