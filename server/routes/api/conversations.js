@@ -2,26 +2,6 @@ const router = require("express").Router();
 const { User, Conversation, Message } = require("../../db/models");
 const { Op } = require("sequelize");
 
-// use this route when clicking on a conversation on sidebar
-// get all messages in a conversation in descending order by time created
-// the conversation will already have loaded username/profile picture, so we don't have to eager load it on the messages
-router.get("/messages/:conversationId", async (req, res, next) => {
-  try {
-    const { conversationId } = req.params;
-
-    const messages = await Message.findAll({
-      where: {
-        conversationId
-      },
-      order: [["createdAt", "DESC"]]
-    });
-
-    res.json(messages);
-  } catch (error) {
-    next(error);
-  }
-});
-
 // set messages as read by reciever (messages will be unread as default upon creation)
 // will be called after all messages load for an individual conversation
 // expects conversationId in body
