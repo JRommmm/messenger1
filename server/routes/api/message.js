@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User, Conversation, Message } = require("../../db/models");
+const { Conversation, Message } = require("../../db/models");
 
 // expects {senderId, recipientId, text, conversationId } in body (conversationId will be null if no conversation exists yet)
 router.post("/", async (req, res, next) => {
@@ -11,8 +11,6 @@ router.post("/", async (req, res, next) => {
       const message = await Message.create({ senderId, text, conversationId });
       return res.json(message);
     }
-
-    // TODO- refactor because we don't need  the messages???
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
     let conversation = await Conversation.findConversation(senderId, recipientId);
 

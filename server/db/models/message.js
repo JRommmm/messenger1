@@ -1,8 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../db");
 
-// associated with the sender user
-
 const Message = db.define("message", {
   text: {
     type: Sequelize.STRING,
