@@ -1,31 +1,43 @@
 import React from "react";
-import { Button, Input, InputLabel, FormControl, FormHelperText } from "@material-ui/core";
+import { Input, FormControl, FormHelperText } from "@material-ui/core";
+import { SubmitButton, FormLabel } from "../components";
+import { REGISTER } from "../constants";
 
 const RegisterForm = (props) => {
-  const { errorMessage, handleSubmit } = props;
+  const { errorMessage } = props;
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormControl required>
-        <InputLabel htmlFor="username">Username</InputLabel>
-        <Input name="username" type="text" required />
+    <>
+      <FormControl margin="normal" required>
+        <FormLabel topMarginClass="topRegister" label="Username" />
+        <Input aria-label="username" name="username" type="text" required />
       </FormControl>
-      <FormControl required>
-        <InputLabel htmlFor="email">E-mail Address</InputLabel>
-        <Input type="email" name="email" />
+      <FormControl margin="normal" required>
+        <FormLabel label="E-mail address" />
+        <Input aria-label="e-mail address" type="email" name="email" />
       </FormControl>
-      <FormControl error={!!errorMessage.confirmPassword} required>
-        <InputLabel htmlFor="password">Password</InputLabel>
-        <Input type="password" inputProps={{ minLength: 6 }} name="password" required />
+      <FormControl margin="normal" error={!!errorMessage.confirmPassword} required>
+        <FormLabel label="Password" />
+        <Input
+          aria-label="password"
+          type="password"
+          inputProps={{ minLength: 6 }}
+          name="password"
+        />
         <FormHelperText>{errorMessage.confirmPassword}</FormHelperText>
       </FormControl>
-      <FormControl error={!!errorMessage.confirmPassword} required>
-        <InputLabel htmlFor="confirmPassword">Confirm Password</InputLabel>
-        <Input type="password" inputProps={{ minLength: 6 }} name="confirmPassword" />
+      <FormControl margin="normal" error={!!errorMessage.confirmPassword} required>
+        <FormLabel label="Confirm Password" />
+        <Input
+          aria-label="confirm password"
+          type="password"
+          inputProps={{ minLength: 6 }}
+          name="confirmPassword"
+        />
         <FormHelperText>{errorMessage.confirmPassword}</FormHelperText>
       </FormControl>
-      <Button type="submit">Create</Button>
-    </form>
+      <SubmitButton authType={REGISTER} />
+    </>
   );
 };
 

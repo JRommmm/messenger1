@@ -1,21 +1,21 @@
 import React from "react";
-import { Button, Input, InputLabel, FormControl } from "@material-ui/core";
+import { Input, FormControl } from "@material-ui/core";
+import { SubmitButton, FormLabel } from "../components";
+import { LOGIN } from "../constants";
 
-const LoginForm = (props) => {
-  const { handleSubmit } = props;
-
+const LoginForm = () => {
   return (
-    <form onSubmit={handleSubmit}>
-      <FormControl required>
-        <InputLabel htmlFor="username">Username</InputLabel>
-        <Input name="username" type="text" required />
+    <>
+      <FormControl margin="normal" required>
+        <FormLabel topMarginClass="topLogin" label="Username" />
+        <Input aria-label="username" name="username" type="text" />
       </FormControl>
-      <FormControl required>
-        <InputLabel htmlFor="password">Password</InputLabel>
-        <Input type="password" inputProps={{ minLength: 6 }} name="password" required />
+      <FormControl margin="normal" required>
+        <FormLabel label="Password" />
+        <Input aria-label="password" type="password" name="password" />
       </FormControl>
-      <Button type="submit">Login</Button>
-    </form>
+      <SubmitButton authType={LOGIN} />
+    </>
   );
 };
 
