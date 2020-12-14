@@ -36,7 +36,7 @@ const Home = (props) => {
 
   return (
     <>
-      {/* login button will eventually be in a dropdown next to username */}
+      {/* logout button will eventually be in a dropdown next to username */}
       <Button className={classes.logout} onClick={handleLogout}>
         Logout
       </Button>

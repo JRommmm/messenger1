@@ -59,7 +59,6 @@ const Sidebar = (props) => {
       <Typography className={classes.chatsTitle}>Chats</Typography>
       <Search />
       {conversations.map((conversation) => {
-        console.log(conversation);
         let otherUser = conversation["user1"] || conversation["user2"];
 
         return (
