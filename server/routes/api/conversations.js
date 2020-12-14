@@ -46,8 +46,8 @@ router.put("/read", async (req, res, next) => {
       message.read = true;
       await message.save();
     }
-    // not sure if I need to send back messages here?
-    return res.json(messages);
+
+    return res.sendStatus(204);
   } catch (error) {
     next(error);
   }
