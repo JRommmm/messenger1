@@ -85,19 +85,11 @@ const Auth = (props) => {
         </Hidden>
       </Grid>
       <div className={classes.container}>
-        {authPage === LOGIN ? (
-          <FormContainer
-            authPage={authPage}
-            handleSubmit={handleLogin}
-            errorMessage={formErrorMessage}
-          />
-        ) : (
-          <FormContainer
-            authPage={authPage}
-            handleSubmit={handleRegister}
-            errorMessage={formErrorMessage}
-          />
-        )}
+        <FormContainer
+          authPage={authPage}
+          handleSubmit={authPage === LOGIN ? handleLogin : handleRegister}
+          errorMessage={formErrorMessage}
+        />
       </div>
     </Grid>
   );

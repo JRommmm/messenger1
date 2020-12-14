@@ -12,7 +12,7 @@ const LoginForm = () => {
       </FormControl>
       <FormControl margin="normal" required>
         <FormLabel label="Password" />
-        <Input type="password" name="password" />
+        <Input aria-label="password" type="password" name="password" />
       </FormControl>
       <SubmitButton authType={LOGIN} />
     </>

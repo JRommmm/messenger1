@@ -39,7 +39,15 @@ const Routes = (props) => {
         />
       )}
       <Switch>
-        <Route exact path="/" component={props.user && props.user.id ? Home : Auth} />
+        <Route
+          exact
+          path="/"
+          render={
+            props.user && props.user.id
+              ? (props) => <Home {...props} />
+              : (props) => <Auth {...props} authPage={REGISTER} />
+          }
+        />
         <Route path="/home" component={Home} />
         <Route path="/register" render={(props) => <Auth {...props} authPage={REGISTER} />} />
         <Route path="/login" render={(props) => <Auth {...props} authPage={LOGIN} />} />

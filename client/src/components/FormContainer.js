@@ -31,7 +31,6 @@ const FormContainer = (props) => {
   if (authPage === REGISTER) {
     text = "Create an account.";
   }
-  console.log(props);
 
   return (
     <div className={classes.root}>

@@ -7,8 +7,6 @@ import store from "./store";
 import { theme } from "./themes/theme";
 import Routes from "./routes";
 
-import "./App.css";
-
 function App() {
   return (
     <Provider store={store}>
