@@ -42,7 +42,7 @@ router.put("/read", async (req, res, next) => {
       }
     });
     // set all unread messages to read
-    for (let message of messages) {
+    for (const message of messages) {
       message.read = true;
       await message.save();
     }
