@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingLeft: 21,
     paddingRight: 21,
-    background: "red",
+
     flexGrow: 1
   },
   userContainer: {
