@@ -2,8 +2,19 @@ import React, { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { logout } from "../store/user";
+import { Grid, CssBaseline, Button } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { Sidebar } from "./Sidebar/index.js";
+import { ActiveChat } from "./ActiveChat";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    height: "100vh"
+  }
+}));
 
 const Home = (props) => {
+  const classes = useStyles();
   const { user, logout } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -24,10 +35,17 @@ const Home = (props) => {
   };
 
   return (
-    <div>
-      Home Page Placeholder
-      <button onClick={handleLogout}>Logout</button>
-    </div>
+    <>
+      {/* logout button will eventually be in a dropdown next to username */}
+      <Button className={classes.logout} onClick={handleLogout}>
+        Logout
+      </Button>
+      <Grid container component="main" className={classes.root}>
+        <CssBaseline />
+        <Sidebar />
+        <ActiveChat />
+      </Grid>
+    </>
   );
 };
 
