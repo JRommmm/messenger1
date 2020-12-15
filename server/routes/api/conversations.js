@@ -7,10 +7,22 @@ const { Op } = require("sequelize");
 // expects conversationId in body
 router.put("/read", async (req, res, next) => {
   try {
+    const { conversationId } = req.body;
+
     if (!req.user) {
       return res.sendStatus(401);
     }
-    const { conversationId } = req.body;
+
+    const conversation = await Conversation.findByPk(conversationId, {
+      attributes: ["user1Id", "user2Id"]
+    });
+
+    const isAuthorized =
+      conversation.user1Id === req.user.id || conversation.user2Id === req.user.id;
+    if (!isAuthorized) {
+      return res.sendStatus(401);
+    }
+
     // find all messages that weren't sent by current user and haven't been read
     const messages = await Message.findAll({
       where: {
@@ -21,6 +33,7 @@ router.put("/read", async (req, res, next) => {
         }
       }
     });
+
     // set all unread messages to read
     for (const message of messages) {
       message.read = true;
@@ -75,10 +88,8 @@ router.get("/", async (req, res, next) => {
     });
 
     for (let i = 0; i < conversations.length; i++) {
-      let conversation = conversations[i];
-      let data = await Message.getPreview(conversation.id, userId);
-      // I had to convert to JSON for these fields to save
-      let conversationJSON = conversation.toJSON();
+      const data = await Conversation.getPreview(conversations[i].id, userId);
+      const conversationJSON = conversations[i].toJSON();
       conversationJSON.latestMessageText = data.latestMessageText;
       conversationJSON.unreadCount = data.unreadCount;
       conversations[i] = conversationJSON;
