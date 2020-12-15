@@ -42,6 +42,7 @@ const reducer = (state = [], action) => {
     case READ_MESSAGES: {
       const stateCopy = [...state];
       const index = state.findIndex((conversation) => conversation.id === action.conversationId);
+      stateCopy[index] = { ...stateCopy[index] };
       stateCopy[index].unreadCount = 0;
       return stateCopy;
     }

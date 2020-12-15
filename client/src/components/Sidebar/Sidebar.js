@@ -52,7 +52,7 @@ const Sidebar = (props) => {
 
   useEffect(() => {
     fetchConversations();
-  }, [fetchConversations]);
+  }, [conversationsData]);
 
   return (
     <Box className={classes.container}>

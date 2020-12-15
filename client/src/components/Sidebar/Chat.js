@@ -64,7 +64,9 @@ const Chat = (props) => {
   const handleClick = async (conversation) => {
     await props.fetchActiveChat(conversation);
     // set unread messages to read once chat loads
-    await props.setMessagesAsRead(conversation.id);
+    if (unreadCount > 0) {
+      await props.setMessagesAsRead(conversation.id);
+    }
   };
 
   let previewTextClass = "";
