@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { BadgeAvatar } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { fetchActiveChat } from "../../store/activeConversation";
+import { setMessagesAsRead } from "../../store/conversations";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
@@ -62,6 +63,8 @@ const Chat = (props) => {
 
   const handleClick = async (conversation) => {
     await props.fetchActiveChat(conversation);
+    // set unread messages to read once chat loads
+    await props.setMessagesAsRead(conversation.id);
   };
 
   let previewTextClass = "";
@@ -91,6 +94,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchActiveChat: (id) => {
       dispatch(fetchActiveChat(id));
+    },
+    setMessagesAsRead: (id) => {
+      dispatch(setMessagesAsRead(id));
     }
   };
 };

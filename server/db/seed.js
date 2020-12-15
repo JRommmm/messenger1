@@ -44,22 +44,45 @@ async function seed() {
     read: true
   });
 
-  const users = await Promise.all([
+  const chiumbo = await User.create({
+    username: "chiumbo",
+    email: "chiumbo@email.com",
+    password: "123456",
+    photoUrl:
+      "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914468/messenger/8bc2e13b8ab74765fd57f0880f318eed1c3fb001_fownwt.png"
+  });
+  const chiumboConvo = await Conversation.create({ user1Id: chiumbo.id, user2Id: thomas.id });
+  await Message.create({
+    conversationId: chiumboConvo.id,
+    senderId: chiumbo.id,
+    text: "Sure! What time?"
+  });
+
+  const hualing = await User.create({
+    username: "hualing",
+    email: "hualing@email.com",
+    password: "123456",
+    photoUrl:
+      "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914466/messenger/6c4faa7d65bc24221c3d369a8889928158daede4_vk5tyg.png"
+  });
+  const hualingConvo = await Conversation.create({ user2Id: hualing.id, user1Id: thomas.id });
+
+  for (let i = 0; i < 11; i++) {
+    await Message.create({
+      conversationId: hualingConvo.id,
+      senderId: hualing.id,
+      text: "a test message"
+    });
+  }
+
+  await Message.create({
+    conversationId: hualingConvo.id,
+    senderId: hualing.id,
+    text: "😂 😂 😂"
+  });
+
+  const otherUsers = await Promise.all([
     ,
-    User.create({
-      username: "chiumbo",
-      email: "chiumbo@email.com",
-      password: "123456",
-      photoUrl:
-        "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914468/messenger/8bc2e13b8ab74765fd57f0880f318eed1c3fb001_fownwt.png"
-    }),
-    User.create({
-      username: "hualing",
-      email: "hualing@email.com",
-      password: "123456",
-      photoUrl:
-        "https://res.cloudinary.com/dmlvthmqr/image/upload/v1607914466/messenger/6c4faa7d65bc24221c3d369a8889928158daede4_vk5tyg.png"
-    }),
     User.create({
       username: "ashanti",
       email: "ashanti@email.com",
@@ -84,7 +107,7 @@ async function seed() {
     })
   ]);
 
-  console.log(`seeded ${users.length} users`);
+  console.log(`seeded users and messages`);
 }
 
 async function runSeed() {

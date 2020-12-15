@@ -51,8 +51,8 @@ const Sidebar = (props) => {
   const { user, fetchConversations, conversationsData } = props;
 
   useEffect(() => {
-    props.fetchConversations();
-  }, []);
+    fetchConversations();
+  }, [fetchConversations]);
 
   return (
     <Box className={classes.container}>
@@ -65,7 +65,7 @@ const Sidebar = (props) => {
       </Box>
       <Typography className={classes.chatsTitle}>Chats</Typography>
       <Search />
-      {props.conversationsData.map((conversation) => {
+      {conversationsData.map((conversation) => {
         conversation.otherUser = conversation["user1"] || conversation["user2"];
         return <Chat conversation={conversation} key={conversation.id} />;
       })}

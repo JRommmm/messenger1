@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 41,
     display: "flex",
     flexDirection: "column",
+    flexGrow: 1,
     justifyContent: "space-between"
   },
   root: {

@@ -2,7 +2,7 @@ import axios from "axios";
 
 const GET_ACTIVE_CHAT = "GET_ACTIVE_CHAT";
 
-export const gotActiveChat = (conversation) => {
+const gotActiveChat = (conversation) => {
   return {
     type: GET_ACTIVE_CHAT,
     conversation
@@ -23,6 +23,7 @@ const reducer = (state = {}, action) => {
   switch (action.type) {
     case GET_ACTIVE_CHAT:
       return action.conversation;
+
     default:
       return state;
   }
