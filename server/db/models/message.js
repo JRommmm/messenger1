@@ -16,4 +16,31 @@ const Message = db.define("message", {
   }
 });
 
+Message.getPreview = async function (conversationId, userId) {
+  const latestMessage = await this.findAll({
+    limit: 1,
+    where: {
+      conversationId
+    },
+    attributes: ["text"],
+    order: [["createdAt", "DESC"]]
+  });
+
+  const unreadMessages = await this.findAll({
+    where: {
+      senderId: {
+        [Sequelize.Op.not]: userId
+      },
+      read: false,
+      conversationId
+    },
+    attributes: ["id"]
+  });
+
+  return {
+    unreadCount: unreadMessages.length,
+    latestMessageText: latestMessage[0] ? latestMessage[0].text : ""
+  };
+};
+
 module.exports = Message;

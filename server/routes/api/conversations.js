@@ -33,8 +33,7 @@ router.put("/read", async (req, res, next) => {
   }
 });
 
-// get all conversations for a user
-// include unread messages (that aren't sent by current user) so we know how many there are for notifications (I haven't figured out yet how to also get the lastest message, whether it is read/sent by user or not (to display on the sidebar))
+// get all conversations for a user, include latest message text for preview and count of unread messages for notifcations
 // include user model so we have info on username/profile pic (don't include current user info)
 
 router.get("/", async (req, res, next) => {
@@ -42,7 +41,6 @@ router.get("/", async (req, res, next) => {
     if (!req.user) {
       return res.sendStatus(401);
     }
-
     const userId = req.user.id;
     const conversations = await Conversation.findAll({
       where: {
@@ -52,19 +50,6 @@ router.get("/", async (req, res, next) => {
         }
       },
       include: [
-        {
-          model: Message,
-
-          where: {
-            senderId: {
-              [Op.not]: userId
-            },
-            read: false
-          },
-          required: false,
-          attributes: ["id"]
-        },
-
         {
           model: User,
           as: "user1",
@@ -85,8 +70,20 @@ router.get("/", async (req, res, next) => {
           },
           required: false
         }
-      ]
+      ],
+      attributes: ["id"]
     });
+
+    for (let i = 0; i < conversations.length; i++) {
+      let conversation = conversations[i];
+      let data = await Message.getPreview(conversation.id, userId);
+      // I had to convert to JSON for these fields to save
+      let conversationJSON = conversation.toJSON();
+      conversationJSON.latestMessageText = data.latestMessageText;
+      conversationJSON.unreadCount = data.unreadCount;
+      conversations[i] = conversationJSON;
+    }
+
     res.json(conversations);
   } catch (error) {
     next(error);
