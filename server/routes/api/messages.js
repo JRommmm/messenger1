@@ -7,15 +7,11 @@ const { Conversation, Message } = require("../../db/models");
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-
-    const messages = await Message.findAll({
-      where: {
-        id
-      },
-      order: [["createdAt", "DESC"]]
+    const conversation = await Conversation.findByPk(id, {
+      include: [{ model: Message, order: [["createdAt", "DESC"]] }]
     });
 
-    res.json(messages);
+    res.json(conversation);
   } catch (error) {
     next(error);
   }

@@ -2,6 +2,8 @@ import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { BadgeAvatar } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
+import { fetchActiveChat } from "../../store/activeConversation";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold"
   },
   read: {
+    fontSize: 12,
     color: "#9CADC8",
     letterSpacing: -0.17
   },
@@ -56,33 +59,41 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { username, typing, notifications } = props;
+  const { latestMessageText, unreadCount, otherUser } = props.conversation;
 
-  let previewText = "";
+  const handleClick = async (conversation) => {
+    await props.fetchActiveChat(conversation);
+  };
+
   let previewTextClass = "";
-  if (typing === true) {
-    previewText = "Typing...";
-    previewTextClass = classes.typing;
-  } else if (notifications > 0) {
-    previewText = props.text;
+  if (unreadCount > 0) {
     previewTextClass = classes.unread;
   } else {
-    previewText = props.text;
     previewTextClass = classes.read;
   }
 
+  //TODO: pointer on hover for chatbox
+
   return (
-    <Box className={classes.root}>
-      <BadgeAvatar profileUrl={props.profileUrl} sidebar={true} />
+    <Box onClick={(event) => handleClick(props.conversation)} className={classes.root}>
+      <BadgeAvatar photoUrl={otherUser.photoUrl} username={otherUser.username} sidebar={true} />
       <Box className={classes.container}>
         <Box className={classes.textContainer}>
-          <Typography className={classes.username}>{username}</Typography>
-          <Typography className={previewTextClass}>{previewText}</Typography>
+          <Typography className={classes.username}>{otherUser.username}</Typography>
+          <Typography className={previewTextClass}>{latestMessageText}</Typography>
         </Box>
-        <Box className={classes.notification}>{notifications}</Box>
+        {unreadCount > 0 && <Box className={classes.notification}>{unreadCount}</Box>}
       </Box>
     </Box>
   );
 };
 
-export default Chat;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchActiveChat: (id) => {
+      dispatch(fetchActiveChat(id));
+    }
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Chat);

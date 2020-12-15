@@ -1,8 +1,9 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box } from "@material-ui/core";
-// import { Input, Header, Messages } from "../ActiveChat";
+
 import { Input, Header, Messages } from "./index";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,20 +22,36 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ActiveChat = () => {
+const ActiveChat = (props) => {
   const classes = useStyles();
-
+  const { conversation, user } = props;
   return (
     <Box className={classes.activeContainer}>
-      <Box>
-        <Header />
-      </Box>
-      <Box className={classes.root}>
-        <Messages />
-        <Input />
-      </Box>
+      {conversation.id && (
+        <>
+          {" "}
+          <Box>
+            <Header username={conversation.otherUser.username} />
+          </Box>
+          <Box className={classes.root}>
+            <Messages
+              messages={conversation.messages}
+              otherUser={conversation.otherUser}
+              currentId={user.id}
+            />
+            <Input />
+          </Box>{" "}
+        </>
+      )}
     </Box>
   );
 };
 
-export default ActiveChat;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    conversation: state.activeConversation
+  };
+};
+
+export default connect(mapStateToProps, null)(ActiveChat);

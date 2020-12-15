@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { Search, Chat, BadgeAvatar } from "./index.js";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
 import { currentUser, conversations } from "../../testData";
+import { connect } from "react-redux";
+import { fetchConversations } from "../../store/conversations";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -47,33 +49,45 @@ const useStyles = makeStyles((theme) => ({
 
 const Sidebar = (props) => {
   const classes = useStyles();
+  const { user, fetchConversations, conversationsData } = props;
+
+  useEffect(() => {
+    props.fetchConversations();
+  }, []);
+
+  console.log(props.conversationsData);
   return (
     <Box className={classes.container}>
       <Box className={classes.userContainer}>
-        <BadgeAvatar profileUrl={currentUser.profilePic} />
+        <BadgeAvatar photoUrl={user.photoUrl} />
         <Box className={classes.userSubContainer}>
-          <Typography className={classes.currentUsername}>{currentUser.username}</Typography>
+          <Typography className={classes.currentUsername}>{user.username}</Typography>
           <MoreHorizIcon classes={{ root: classes.ellipsis }} />
         </Box>
       </Box>
       <Typography className={classes.chatsTitle}>Chats</Typography>
       <Search />
-      {conversations.map((conversation) => {
-        let otherUser = conversation["user1"] || conversation["user2"];
-
-        return (
-          <Chat
-            key={conversation.id}
-            username={otherUser.username}
-            profileUrl={otherUser.profilePic}
-            notifications={conversation.unread.length}
-            typing={conversation.typing}
-            text={conversation.latestMessageText}
-          />
-        );
+      {props.conversationsData.map((conversation) => {
+        conversation.otherUser = conversation["user1"] || conversation["user2"];
+        return <Chat conversation={conversation} key={conversation.id} />;
       })}
     </Box>
   );
 };
 
-export default Sidebar;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    conversationsData: state.conversations
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchConversations: () => {
+      dispatch(fetchConversations());
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

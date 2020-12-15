@@ -6,6 +6,7 @@ import { Grid, CssBaseline, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Sidebar } from "./Sidebar/index.js";
 import { ActiveChat } from "./ActiveChat";
+import { fetchConversations } from "../store/conversations";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -51,7 +52,8 @@ const Home = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user
+    user: state.user,
+    conversationsData: state.conversations
   };
 };
 
@@ -59,6 +61,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => {
       dispatch(logout());
+    },
+    fetchConversations: () => {
+      dispatch(fetchConversations());
     }
   };
 };
