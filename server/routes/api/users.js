@@ -2,7 +2,7 @@ const router = require("express").Router();
 const { User, Conversation } = require("../../db/models");
 
 // find user by username, and find coversation if user exists
-router.get("/:username:/currentUserId", async (req, res, next) => {
+router.get("/:username", async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
@@ -16,7 +16,7 @@ router.get("/:username:/currentUserId", async (req, res, next) => {
     if (!user) {
       return res.json({});
     }
-    const conversation = await Conversation.findConversation(currentUserId, req.user.id);
+    const conversation = await Conversation.findConversation(username, req.user.id);
     res.json(conversation);
   } catch (error) {
     next(error);
