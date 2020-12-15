@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const GreyBubble = (props) => {
+const SenderBubble = (props) => {
   const classes = useStyles();
   const { date, text } = props;
   return (
@@ -40,4 +40,4 @@ const GreyBubble = (props) => {
   );
 };
 
-export default GreyBubble;
+export default SenderBubble;

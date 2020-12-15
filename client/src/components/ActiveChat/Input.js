@@ -4,7 +4,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    justifySelf: "flex-end"
+    justifySelf: "flex-end",
+    marginTop: 15
   },
   input: {
     height: 70,

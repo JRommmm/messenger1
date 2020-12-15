@@ -3,18 +3,17 @@ import { Box, Typography } from "@material-ui/core";
 import { Search, Chat, BadgeAvatar } from "./index.js";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
-import { currentUser, conversations } from "../../testData";
 import { connect } from "react-redux";
 import { fetchConversations } from "../../store/conversations";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    width: 342,
     paddingLeft: 21,
-    paddingRight: 21
+    paddingRight: 21,
+    background: "red",
+    flexGrow: 1
   },
   userContainer: {
-    width: 292,
     height: 44,
     marginTop: 23,
     marginLeft: 6,
@@ -55,7 +54,6 @@ const Sidebar = (props) => {
     props.fetchConversations();
   }, []);
 
-  console.log(props.conversationsData);
   return (
     <Box className={classes.container}>
       <Box className={classes.userContainer}>

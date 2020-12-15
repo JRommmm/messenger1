@@ -38,11 +38,12 @@ const Home = (props) => {
   return (
     <>
       {/* logout button will eventually be in a dropdown next to username */}
-      <Button className={classes.logout} onClick={handleLogout}>
+      {/* <Button className={classes.logout} onClick={handleLogout}>
         Logout
-      </Button>
+      </Button> */}
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
+        {/* <Grid item component={Sidebar} lg={3} /> */}
         <Sidebar />
         <ActiveChat />
       </Grid>

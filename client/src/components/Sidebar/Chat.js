@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     borderRadius: 8,
     height: 80,
-    width: 300,
     boxShadow: "0 2px 10px 0 rgba(88,133,196,0.05)",
     marginBottom: 10,
     display: "flex",
