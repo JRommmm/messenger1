@@ -23,21 +23,19 @@ const useStyles = makeStyles((theme) => ({
 const ActiveChat = (props) => {
   const classes = useStyles();
   const { conversation, user } = props;
+  const { otherUser, messages, id } = conversation;
+
   return (
     <Box className={classes.root}>
       {conversation.id && (
         <>
           {" "}
           <Box>
-            <Header username={conversation.otherUser.username} />
+            <Header username={otherUser.username} />
           </Box>
           <Box className={classes.container}>
-            <Messages
-              messages={conversation.messages}
-              otherUser={conversation.otherUser}
-              currentId={user.id}
-            />
-            <Input />
+            <Messages messages={messages} otherUser={otherUser} currentId={user.id} />
+            <Input otherUserId={otherUser.id} conversationId={id} />
           </Box>{" "}
         </>
       )}
@@ -48,7 +46,7 @@ const ActiveChat = (props) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    conversation: state.activeConversation
+    conversation: state.conversations.active
   };
 };
 

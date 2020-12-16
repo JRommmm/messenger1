@@ -1,8 +1,8 @@
 import React from "react";
 import { Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { LoginForm, RegisterForm, AuthNav } from "../components";
-import { LOGIN, REGISTER } from "../constants";
+import { LoginForm, RegisterForm, AuthNav } from "../Auth";
+import { LOGIN, REGISTER } from "../../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {

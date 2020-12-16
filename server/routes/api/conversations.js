@@ -63,6 +63,7 @@ router.get("/", async (req, res, next) => {
         }
       },
       include: [
+        { model: Message, order: ["id", "DESC"] },
         {
           model: User,
           as: "user1",
@@ -88,7 +89,7 @@ router.get("/", async (req, res, next) => {
     });
 
     for (let i = 0; i < conversations.length; i++) {
-      const data = await Conversation.getPreview(conversations[i].id, userId);
+      const data = await Conversation.getUnreadCount(conversations[i].id, userId);
       const conversationJSON = conversations[i].toJSON();
       conversationJSON.latestMessageText = data.latestMessageText;
       conversationJSON.unreadCount = data.unreadCount;

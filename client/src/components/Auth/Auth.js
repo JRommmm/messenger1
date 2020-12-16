@@ -3,11 +3,13 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { CssBaseline, Grid, Typography, Hidden } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { FormContainer } from "../components";
-import Image from "../assets/bg-img.png";
-import { ReactComponent as ChatIcon } from "../assets/chat-bubble.svg";
-import { LOGIN } from "../constants";
-import { register, login } from "../store/user";
+
+import Image from "../../assets/bg-img.png";
+import { ReactComponent as ChatIcon } from "../../assets/chat-bubble.svg";
+
+import { FormContainer } from "../Auth";
+import { LOGIN } from "../../constants";
+import { register, login } from "../../store/user";
 
 const useStyles = makeStyles((theme) => ({
   root: {

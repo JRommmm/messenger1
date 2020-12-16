@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { BadgeAvatar } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
-import { fetchActiveChat } from "../../store/activeConversation";
+import { setActiveChat } from "../../store/conversations";
 import { setMessagesAsRead } from "../../store/conversations";
 import { connect } from "react-redux";
 
@@ -59,10 +59,11 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { latestMessageText, unreadCount, otherUser } = props.conversation;
+  const { conversation } = props;
+  const { latestMessageText, unreadCount, otherUser } = conversation;
 
   const handleClick = async (conversation) => {
-    await props.fetchActiveChat(conversation);
+    await props.setActiveChat(conversation);
     // set unread messages to read once chat loads
     if (unreadCount > 0) {
       await props.setMessagesAsRead(conversation.id);
@@ -79,7 +80,7 @@ const Chat = (props) => {
   //TODO: pointer on hover for chatbox
 
   return (
-    <Box onClick={(event) => handleClick(props.conversation)} className={classes.root}>
+    <Box onClick={() => handleClick(conversation)} className={classes.root}>
       <BadgeAvatar photoUrl={otherUser.photoUrl} username={otherUser.username} sidebar={true} />
       <Box className={classes.container}>
         <Box className={classes.textContainer}>
@@ -94,8 +95,8 @@ const Chat = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchActiveChat: (id) => {
-      dispatch(fetchActiveChat(id));
+    setActiveChat: (conversation) => {
+      dispatch(setActiveChat(conversation));
     },
     setMessagesAsRead: (id) => {
       dispatch(setMessagesAsRead(id));

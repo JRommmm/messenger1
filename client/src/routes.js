@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { fetchUser } from "./store/user";
-import { Login, Home, SnackbarError, Auth } from "./components";
+import { Auth } from "./components/Auth";
+import { Home, SnackbarError } from "./components";
 import { LOGIN, REGISTER } from "./constants";
 
 const Routes = (props) => {

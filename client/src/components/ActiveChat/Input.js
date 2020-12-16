@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
+import { postMessage } from "../../store/conversations";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,15 +19,41 @@ const useStyles = makeStyles((theme) => ({
 
 const Input = (props) => {
   const classes = useStyles();
+  const [text, setText] = useState("");
+  const { postMessage, otherUserId, conversationId } = props;
+
+  const handleChange = (event) => {
+    setText(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const message = { text: event.target.text.value, recipientId: otherUserId, conversationId };
+    await postMessage(message);
+  };
+
   return (
-    <FormControl className={classes.root} fullWidth hiddenLabel>
-      <FilledInput
-        classes={{ root: classes.input }}
-        disableUnderline
-        placeholder="Type something..."
-      />
-    </FormControl>
+    <form className={classes.root} onSubmit={handleSubmit}>
+      <FormControl fullWidth hiddenLabel>
+        <FilledInput
+          classes={{ root: classes.input }}
+          disableUnderline
+          placeholder="Type something..."
+          value={text}
+          name="text"
+          onChange={handleChange}
+        />
+      </FormControl>
+    </form>
   );
 };
 
-export default Input;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    postMessage: (message) => {
+      dispatch(postMessage(message));
+    }
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Input);

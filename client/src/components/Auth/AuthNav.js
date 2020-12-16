@@ -1,7 +1,7 @@
 import React from "react";
 import { makeStyles, Typography, Button } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
-import { REGISTER, LOGIN } from "../constants";
+import { REGISTER, LOGIN } from "../../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -1,7 +1,7 @@
 import React from "react";
 import { Input, FormControl, FormHelperText } from "@material-ui/core";
-import { SubmitButton, FormLabel } from "../components";
-import { REGISTER } from "../constants";
+import { SubmitButton, FormLabel } from "../Auth";
+import { REGISTER } from "../../constants";
 
 const RegisterForm = (props) => {
   const { errorMessage } = props;

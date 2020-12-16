@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { Search, Chat, BadgeAvatar } from "./index.js";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { fetchConversations } from "../../store/conversations";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -48,11 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Sidebar = (props) => {
   const classes = useStyles();
-  const { user, fetchConversations, conversationsData } = props;
-
-  useEffect(() => {
-    fetchConversations();
-  }, [conversationsData]);
+  const { user, conversations } = props;
 
   return (
     <Box className={classes.container}>
@@ -65,7 +60,7 @@ const Sidebar = (props) => {
       </Box>
       <Typography className={classes.chatsTitle}>Chats</Typography>
       <Search />
-      {conversationsData.map((conversation) => {
+      {conversations.map((conversation) => {
         conversation.otherUser = conversation["user1"] || conversation["user2"];
         return <Chat conversation={conversation} key={conversation.id} />;
       })}
@@ -76,16 +71,8 @@ const Sidebar = (props) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    conversationsData: state.conversations
+    conversations: state.conversations.all
   };
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    fetchConversations: () => {
-      dispatch(fetchConversations());
-    }
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);
+export default connect(mapStateToProps)(Sidebar);
