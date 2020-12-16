@@ -63,7 +63,7 @@ const Chat = (props) => {
   const { latestMessageText, unreadCount, otherUser } = conversation;
 
   const handleClick = async (conversation) => {
-    await props.setActiveChat(conversation);
+    await props.setActiveChat(conversation.id);
     // set unread messages to read once chat loads
     if (unreadCount > 0) {
       await props.setMessagesAsRead(conversation.id);

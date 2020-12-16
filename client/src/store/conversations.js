@@ -7,10 +7,10 @@ const CLEAR_ON_LOGOUT = "CLEAR_ON_LOGOUT";
 
 const SET_ACTIVE_CHAT = "GET_ACTIVE_CHAT";
 
-export const setActiveChat = (conversation) => {
+export const setActiveChat = (conversationId) => {
   return {
     type: SET_ACTIVE_CHAT,
-    conversation
+    conversationId
   };
 };
 
@@ -69,46 +69,43 @@ export const setMessagesAsRead = (conversationId) => async (dispatch) => {
   }
 };
 
-const reducer = (state = { active: {}, all: [] }, action) => {
+const reducer = (state = { active: null, all: [] }, action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
       return { ...state, all: action.conversations };
     case SET_ACTIVE_CHAT: {
-      return { ...state, active: action.conversation };
+      return { ...state, active: action.conversationId };
     }
     case SET_MESSAGE: {
-      // this can definitely be refactored to be cleaner...but I'm not sure how while also not modifying the original state
+      const allCopy = state.all.map((conversation) => {
+        if (conversation.id === action.message.conversationId) {
+          const conversationCopy = { ...conversation };
+          const messagesCopy = [...conversationCopy.messages];
+          messagesCopy.push(action.message);
+          conversationCopy.messages = messagesCopy;
+          conversationCopy.latestMessageText = action.message.text;
+          return conversationCopy;
+        } else {
+          return conversation;
+        }
+      });
 
-      const allCopy = [...state.all];
-      const index = allCopy.findIndex((current) => current.id === action.message.conversationId);
-      const conversationCopy = { ...state.all[index] };
-      const messagesCopy = [...conversationCopy.messages];
-      messagesCopy.push(action.message);
-      conversationCopy.messages = messagesCopy;
-      conversationCopy.latestMessageText = action.message.text;
-      allCopy[index] = conversationCopy;
-
-      // if we're on the active chat, also update that
-      let active = state.active;
-      if (state.active.id === action.message.conversationId) {
-        const activeCopy = { ...state.active };
-        const activeMessagesCopy = [...activeCopy.messages];
-        activeMessagesCopy.push(action.message);
-        activeCopy.messages = activeMessagesCopy;
-        active = activeCopy;
-      }
-
-      return { active, all: allCopy };
+      return { ...state, all: allCopy };
     }
     case READ_MESSAGES: {
-      const allCopy = [...state.all];
-      const index = allCopy.findIndex((conversation) => conversation.id === action.conversationId);
-      allCopy[index] = { ...allCopy[index] };
-      allCopy[index].unreadCount = 0;
+      const allCopy = state.all.map((conversation) => {
+        if (conversation.id === action.conversationId) {
+          const conversationCopy = { ...conversation };
+          conversationCopy.unreadCount = 0;
+          return conversationCopy;
+        } else {
+          return conversation;
+        }
+      });
       return { ...state, all: allCopy };
     }
     case CLEAR_ON_LOGOUT: {
-      return { active: {}, all: [] };
+      return { active: null, all: [] };
     }
     default:
       return state;

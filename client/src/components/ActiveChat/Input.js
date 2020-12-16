@@ -30,6 +30,7 @@ const Input = (props) => {
     event.preventDefault();
     const message = { text: event.target.text.value, recipientId: otherUserId, conversationId };
     await postMessage(message);
+    setText("");
   };
 
   return (

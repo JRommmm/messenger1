@@ -47,7 +47,6 @@ const Home = (props) => {
       </Button>
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
-        {/* <Grid item component={Sidebar} lg={3} /> */}
         <Sidebar />
         <ActiveChat />
       </Grid>

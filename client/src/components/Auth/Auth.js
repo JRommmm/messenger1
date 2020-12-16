@@ -8,7 +8,7 @@ import Image from "../../assets/bg-img.png";
 import { ReactComponent as ChatIcon } from "../../assets/chat-bubble.svg";
 
 import { FormContainer } from "../Auth";
-import { LOGIN } from "../../constants";
+import { LOGIN, REGISTER } from "../../constants";
 import { register, login } from "../../store/user";
 
 const useStyles = makeStyles((theme) => ({
@@ -88,7 +88,7 @@ const Auth = (props) => {
       </Grid>
       <div className={classes.container}>
         <FormContainer
-          authPage={authPage}
+          authPage={authPage ? authPage : REGISTER}
           handleSubmit={authPage === LOGIN ? handleLogin : handleRegister}
           errorMessage={formErrorMessage}
         />
