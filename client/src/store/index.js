@@ -3,8 +3,8 @@ import loggerMiddleware from "redux-logger";
 import thunkMiddleware from "redux-thunk";
 
 import user from "./user";
+import conversations from "./conversations";
 
-// will be addign more reducers later
-const reducer = combineReducers({ user });
+const reducer = combineReducers({ user, conversations });
 
 export default createStore(reducer, applyMiddleware(thunkMiddleware, loggerMiddleware));

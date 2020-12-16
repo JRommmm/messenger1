@@ -1,5 +1,4 @@
 import React from "react";
-import { conversation } from "../../testData";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography, Avatar } from "@material-ui/core";
 
@@ -32,18 +31,15 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const BlueBubble = (props) => {
+const OtherUserBubble = (props) => {
   const classes = useStyles();
-  const { text, date, username } = props;
+  const { text, time, otherUser } = props;
   return (
     <Box className={classes.root}>
-      <Avatar
-        alt="avatar"
-        src={conversation.otherUser.profilePic}
-        className={classes.avatar}></Avatar>
+      <Avatar alt={otherUser.username} src={otherUser.photoUrl} className={classes.avatar}></Avatar>
       <Box>
         <Typography className={classes.usernameDate}>
-          {username} {date}
+          {otherUser.username} {time}
         </Typography>
         <Box className={classes.bubble}>
           <Typography className={classes.text}>{text}</Typography>
@@ -53,4 +49,4 @@ const BlueBubble = (props) => {
   );
 };
 
-export default BlueBubble;
+export default OtherUserBubble;

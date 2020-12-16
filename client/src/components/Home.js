@@ -4,8 +4,9 @@ import { connect } from "react-redux";
 import { logout } from "../store/user";
 import { Grid, CssBaseline, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Sidebar } from "./Sidebar/index.js";
+import { Sidebar } from "./Sidebar";
 import { ActiveChat } from "./ActiveChat";
+import { clearOnLogout, fetchConversations } from "../store/conversations";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -15,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = (props) => {
   const classes = useStyles();
-  const { user, logout } = props;
+  const { user, logout, fetchConversations } = props;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -23,6 +24,10 @@ const Home = (props) => {
       setIsLoggedIn(true);
     }
   }, [user.id]);
+
+  useEffect(() => {
+    fetchConversations();
+  }, [fetchConversations]);
 
   if (!user.id) {
     // If we were previously logged in, redirect to login instead of register
@@ -51,7 +56,8 @@ const Home = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.user
+    user: state.user,
+    conversations: state.conversations.all
   };
 };
 
@@ -59,6 +65,10 @@ const mapDispatchToProps = (dispatch) => {
   return {
     logout: () => {
       dispatch(logout());
+      dispatch(clearOnLogout());
+    },
+    fetchConversations: () => {
+      dispatch(fetchConversations());
     }
   };
 };

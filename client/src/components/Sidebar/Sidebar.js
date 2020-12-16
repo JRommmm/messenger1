@@ -3,16 +3,15 @@ import { Box, Typography } from "@material-ui/core";
 import { Search, Chat, BadgeAvatar } from "./index.js";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
-import { currentUser, conversations } from "../../testData";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    width: 342,
     paddingLeft: 21,
-    paddingRight: 21
+    paddingRight: 21,
+    flexGrow: 1
   },
   userContainer: {
-    width: 292,
     height: 44,
     marginTop: 23,
     marginLeft: 6,
@@ -47,33 +46,32 @@ const useStyles = makeStyles((theme) => ({
 
 const Sidebar = (props) => {
   const classes = useStyles();
+  const { user, conversations } = props;
+
   return (
     <Box className={classes.container}>
       <Box className={classes.userContainer}>
-        <BadgeAvatar profileUrl={currentUser.profilePic} />
+        <BadgeAvatar photoUrl={user.photoUrl} />
         <Box className={classes.userSubContainer}>
-          <Typography className={classes.currentUsername}>{currentUser.username}</Typography>
+          <Typography className={classes.currentUsername}>{user.username}</Typography>
           <MoreHorizIcon classes={{ root: classes.ellipsis }} />
         </Box>
       </Box>
       <Typography className={classes.chatsTitle}>Chats</Typography>
       <Search />
       {conversations.map((conversation) => {
-        let otherUser = conversation["user1"] || conversation["user2"];
-
-        return (
-          <Chat
-            key={conversation.id}
-            username={otherUser.username}
-            profileUrl={otherUser.profilePic}
-            notifications={conversation.unread.length}
-            typing={conversation.typing}
-            text={conversation.latestMessageText}
-          />
-        );
+        conversation.otherUser = conversation["user1"] || conversation["user2"];
+        return <Chat conversation={conversation} key={conversation.id} />;
       })}
     </Box>
   );
 };
 
-export default Sidebar;
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+    conversations: state.conversations.all
+  };
+};
+
+export default connect(mapStateToProps)(Sidebar);

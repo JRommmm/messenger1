@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { BadgeAvatar } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
+import { setActiveChat } from "../../store/conversations";
+import { setMessagesAsRead } from "../../store/conversations";
+import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     borderRadius: 8,
     height: 80,
-    width: 300,
     boxShadow: "0 2px 10px 0 rgba(88,133,196,0.05)",
     marginBottom: 10,
     display: "flex",
@@ -35,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold"
   },
   read: {
+    fontSize: 12,
     color: "#9CADC8",
     letterSpacing: -0.17
   },
@@ -56,33 +59,49 @@ const useStyles = makeStyles((theme) => ({
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { username, typing, notifications } = props;
+  const { conversation } = props;
+  const { latestMessageText, unreadCount, otherUser } = conversation;
 
-  let previewText = "";
+  const handleClick = async (conversation) => {
+    await props.setActiveChat(conversation.id);
+    // set unread messages to read once chat loads
+    if (unreadCount > 0) {
+      await props.setMessagesAsRead(conversation.id);
+    }
+  };
+
   let previewTextClass = "";
-  if (typing === true) {
-    previewText = "Typing...";
-    previewTextClass = classes.typing;
-  } else if (notifications > 0) {
-    previewText = props.text;
+  if (unreadCount > 0) {
     previewTextClass = classes.unread;
   } else {
-    previewText = props.text;
     previewTextClass = classes.read;
   }
 
+  //TODO: pointer on hover for chatbox
+
   return (
-    <Box className={classes.root}>
-      <BadgeAvatar profileUrl={props.profileUrl} sidebar={true} />
+    <Box onClick={() => handleClick(conversation)} className={classes.root}>
+      <BadgeAvatar photoUrl={otherUser.photoUrl} username={otherUser.username} sidebar={true} />
       <Box className={classes.container}>
         <Box className={classes.textContainer}>
-          <Typography className={classes.username}>{username}</Typography>
-          <Typography className={previewTextClass}>{previewText}</Typography>
+          <Typography className={classes.username}>{otherUser.username}</Typography>
+          <Typography className={previewTextClass}>{latestMessageText}</Typography>
         </Box>
-        <Box className={classes.notification}>{notifications}</Box>
+        {unreadCount > 0 && <Box className={classes.notification}>{unreadCount}</Box>}
       </Box>
     </Box>
   );
 };
 
-export default Chat;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setActiveChat: (conversation) => {
+      dispatch(setActiveChat(conversation));
+    },
+    setMessagesAsRead: (id) => {
+      dispatch(setMessagesAsRead(id));
+    }
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Chat);

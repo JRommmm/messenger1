@@ -49,14 +49,15 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
   const classes = useStyles();
+  const { username } = props;
 
-  // hard coding for now until everything's hooked up
+  // hard coding for now until sockets are hooked up
   const status = "online";
 
   return (
     <Box className={classes.root}>
       <Box className={classes.content}>
-        <Typography className={classes.username}>santiago</Typography>
+        <Typography className={classes.username}>{username}</Typography>
         <Box className={`${classes.statusDot} ${classes[status]}`}></Box>
         <Typography className={classes.statusText}>
           {status === "online" ? "Online" : "Offline"}

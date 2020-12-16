@@ -1,7 +1,7 @@
 import React from "react";
 import { Input, FormControl } from "@material-ui/core";
-import { SubmitButton, FormLabel } from "../components";
-import { LOGIN } from "../constants";
+import { SubmitButton, FormLabel } from "../Auth";
+import { LOGIN } from "../../constants";
 
 const LoginForm = () => {
   return (

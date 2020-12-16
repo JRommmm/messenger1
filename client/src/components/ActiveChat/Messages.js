@@ -1,24 +1,21 @@
 import React from "react";
 import { Box } from "@material-ui/core";
-import { GreyBubble, BlueBubble } from "../ActiveChat";
-import { currentUser, conversation, messages } from "../../testData";
+import { SenderBubble, OtherUserBubble } from "../ActiveChat";
+import moment from "moment";
 
-const Messages = () => {
+const Messages = (props) => {
+  const { messages, otherUser, currentId } = props;
+
   return (
     <Box>
       {messages.map((message) => {
-        if (message.senderId === currentUser.id) {
-          // return grey bubble
-          return <GreyBubble text={message.text} date={message.datePlaceholder} />;
-        } else {
-          return (
-            <BlueBubble
-              text={message.text}
-              date={message.datePlaceholder}
-              username={conversation.otherUser.username}
-            />
-          );
-        }
+        const time = moment(message.createdAt).format("h:mm");
+
+        return message.senderId === currentId ? (
+          <SenderBubble key={message.id} text={message.text} time={time} />
+        ) : (
+          <OtherUserBubble key={message.id} text={message.text} time={time} otherUser={otherUser} />
+        );
       })}
     </Box>
   );

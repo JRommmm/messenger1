@@ -27,12 +27,12 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const GreyBubble = (props) => {
+const SenderBubble = (props) => {
   const classes = useStyles();
-  const { date, text } = props;
+  const { time, text } = props;
   return (
     <Box className={classes.root}>
-      <Typography className={classes.date}>{date}</Typography>
+      <Typography className={classes.date}>{time}</Typography>
       <Box className={classes.bubble}>
         <Typography className={classes.text}>{text}</Typography>
       </Box>
@@ -40,4 +40,4 @@ const GreyBubble = (props) => {
   );
 };
 
-export default GreyBubble;
+export default SenderBubble;

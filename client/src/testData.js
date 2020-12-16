@@ -88,12 +88,14 @@ export const messages = [
   {
     text: "Where are you from?",
     datePlaceholder: "10:45",
-    senderId: 10
+    senderId: 10,
+    id: 10
   },
   {
     text: "I'm from New York",
     datePlaceholder: "10:51",
-    senderId: 1
+    senderId: 1,
+    id: 11
   },
-  { text: "Share photo of your city, please", datePlaceholder: "10:55", senderId: 10 }
+  { text: "Share photo of your city, please", datePlaceholder: "10:55", senderId: 10, id: 12 }
 ];
