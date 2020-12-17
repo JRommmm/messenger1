@@ -28,6 +28,21 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces, and sync database.
  */
 
+io.on("connection", (socket) => {
+  console.log("connected");
+
+  // event - join/subscribe to channel
+  // takes in convo id
+  // socket.join("convoId")
+  // io.on("join-convo", (conversationId) => {
+  //   socket.join(conversationId);
+  // });
+
+  // io.on("new-message", (message) => {
+  //   io.to("2").emit("new-message", message);
+  // });
+});
+
 // Not sure where to sync session store....putting it here for now
 sessionStore
   .sync()
