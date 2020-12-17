@@ -7,6 +7,10 @@ const socket = io(window.location.origin);
 socket.on("connect", () => {
   console.log("connected to server");
 
+  socket.on("go-online", (username) => {
+    console.log("online");
+  });
+
   // socket.on("new-message", (message) => {
   //   console.log("client new message", message);
   //   store.dispatch(setNewMessage(message));

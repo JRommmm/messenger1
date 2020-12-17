@@ -28,8 +28,12 @@ const server = http.createServer(app);
  * Listen on provided port, on all network interfaces, and sync database.
  */
 
+const io = require("socket.io")(server);
+
+const connectedUsers = {};
+
 io.on("connection", (socket) => {
-  console.log("connected");
+  console.log(socket.id);
 
   // event - join/subscribe to channel
   // takes in convo id
