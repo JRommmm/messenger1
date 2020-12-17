@@ -13,7 +13,10 @@ const useStyles = makeStyles(() => ({
     width: 13,
     borderRadius: "50%",
     border: "2px solid white",
-    color: "#1CED84"
+    backgroundColor: "#D0DAE9"
+  },
+  online: {
+    backgroundColor: "#1CED84"
   },
   sidebar: {
     marginLeft: 17
@@ -22,13 +25,12 @@ const useStyles = makeStyles(() => ({
 
 const UserAvatar = (props) => {
   const classes = useStyles();
-  const { sidebar, username, photoUrl } = props;
+  const { sidebar, username, photoUrl, online } = props;
 
   return (
     <Box className={sidebar ? classes.sidebar : ""}>
       <Badge
-        classes={{ badge: classes.badge }}
-        color="primary"
+        classes={{ badge: `${classes.badge} ${online && classes.online}` }}
         variant="dot"
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         overlap="circle">

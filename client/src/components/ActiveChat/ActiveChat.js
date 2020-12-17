@@ -31,7 +31,10 @@ const ActiveChat = (props) => {
         <>
           {" "}
           <Box>
-            <Header username={conversation.otherUser.username} />
+            <Header
+              username={conversation.otherUser.username}
+              online={conversation.otherUser.online || false}
+            />
           </Box>
           <Box className={classes.container}>
             <Messages
@@ -39,7 +42,7 @@ const ActiveChat = (props) => {
               otherUser={conversation.otherUser}
               currentId={user.id}
             />
-            <Input otherUserId={conversation.otherUser.id} conversationId={conversation.id} />
+            <Input otherUser={conversation.otherUser} conversationId={conversation.id} />
           </Box>{" "}
         </>
       )}

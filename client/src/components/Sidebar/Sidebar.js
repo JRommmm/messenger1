@@ -51,7 +51,7 @@ const Sidebar = (props) => {
   return (
     <Box className={classes.container}>
       <Box className={classes.userContainer}>
-        <BadgeAvatar photoUrl={user.photoUrl} />
+        <BadgeAvatar photoUrl={user.photoUrl} online={true} />
         <Box className={classes.userSubContainer}>
           <Typography className={classes.currentUsername}>{user.username}</Typography>
           <MoreHorizIcon classes={{ root: classes.ellipsis }} />
@@ -61,6 +61,7 @@ const Sidebar = (props) => {
       <Search />
       {conversations.map((conversation) => {
         conversation.otherUser = conversation["user1"] || conversation["user2"];
+
         return <Chat conversation={conversation} key={conversation.id} />;
       })}
     </Box>

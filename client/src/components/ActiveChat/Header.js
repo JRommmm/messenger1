@@ -32,13 +32,11 @@ const useStyles = makeStyles((theme) => ({
     height: 8,
     width: 8,
     borderRadius: "50%",
-    marginRight: 5
-  },
-  offline: {
-    background: theme.palette.secondary.main
+    marginRight: 5,
+    backgroundColor: "#D0DAE9"
   },
   online: {
-    background: theme.palette.primary.main
+    background: "#1CED84"
   },
   ellipsis: {
     color: "#95A7C4",
@@ -49,19 +47,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Header = (props) => {
   const classes = useStyles();
-  const { username } = props;
-
-  // hard coding for now until sockets are hooked up
-  const status = "online";
+  const { username, online } = props;
 
   return (
     <Box className={classes.root}>
       <Box className={classes.content}>
         <Typography className={classes.username}>{username}</Typography>
-        <Box className={`${classes.statusDot} ${classes[status]}`}></Box>
-        <Typography className={classes.statusText}>
-          {status === "online" ? "Online" : "Offline"}
-        </Typography>
+        <Box className={`${classes.statusDot} ${classes[online && "online"]}`}></Box>
+        <Typography className={classes.statusText}>{online ? "Online" : "Offline"}</Typography>
       </Box>
       <MoreHorizIcon classes={{ root: classes.ellipsis }} />
     </Box>

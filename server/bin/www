@@ -33,21 +33,17 @@ const io = require("socket.io")(server);
 const connectedUsers = {};
 
 io.on("connection", (socket) => {
-  console.log(socket.id);
+  socket.on("go-online", (data) => {
+    connectedUsers[data] = socket.id;
+    io.emit("get-online-users", connectedUsers);
+  });
 
-  // event - join/subscribe to channel
-  // takes in convo id
-  // socket.join("convoId")
-  // io.on("join-convo", (conversationId) => {
-  //   socket.join(conversationId);
-  // });
-
-  // io.on("new-message", (message) => {
-  //   io.to("2").emit("new-message", message);
-  // });
+  socket.on("new-message", (data) => {
+    const socketId = connectedUsers[data.recipientId];
+    io.to(socketId).emit("new-message", data.message);
+  });
 });
 
-// Not sure where to sync session store....putting it here for now
 sessionStore
   .sync()
   .then(() => db.sync())

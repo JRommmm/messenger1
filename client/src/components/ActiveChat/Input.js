@@ -3,6 +3,7 @@ import { FormControl, FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { postMessage } from "../../store/conversations";
+import socket from "../../socket";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
 const Input = (props) => {
   const classes = useStyles();
   const [text, setText] = useState("");
-  const { postMessage, otherUserId, conversationId } = props;
+  const { postMessage, otherUser, conversationId } = props;
 
   const handleChange = (event) => {
     setText(event.target.value);
@@ -28,8 +29,9 @@ const Input = (props) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const message = { text: event.target.text.value, recipientId: otherUserId, conversationId };
+    const message = { text: event.target.text.value, recipientId: otherUser.id, conversationId };
     await postMessage(message);
+
     setText("");
   };
 

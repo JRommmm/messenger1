@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Sidebar } from "./Sidebar";
 import { ActiveChat } from "./ActiveChat";
 import { clearOnLogout, fetchConversations } from "../store/conversations";
+import socket from "../socket";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,6 +23,7 @@ const Home = (props) => {
   useEffect(() => {
     if (user.id) {
       setIsLoggedIn(true);
+      socket.emit("go-online", user.id);
     }
   }, [user.id]);
 

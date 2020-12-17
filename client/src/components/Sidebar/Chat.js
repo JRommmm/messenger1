@@ -81,7 +81,12 @@ const Chat = (props) => {
 
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
-      <BadgeAvatar photoUrl={otherUser.photoUrl} username={otherUser.username} sidebar={true} />
+      <BadgeAvatar
+        photoUrl={otherUser.photoUrl}
+        username={otherUser.username}
+        online={otherUser.online}
+        sidebar={true}
+      />
       <Box className={classes.container}>
         <Box className={classes.textContainer}>
           <Typography className={classes.username}>{otherUser.username}</Typography>
