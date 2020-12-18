@@ -2,7 +2,7 @@ import axios from "axios";
 import socket from "../socket";
 import store from "../store/index";
 
-// TODO: refactor into multiple reducers?
+// TODO: refactor into multiple reducers
 
 const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 const READ_MESSAGES = "READ_MESSAGES";
@@ -11,6 +11,8 @@ const CLEAR_ON_LOGOUT = "CLEAR_ON_LOGOUT";
 const SET_ACTIVE_CHAT = "GET_ACTIVE_CHAT";
 const SET_CONNECTED_USERS = "SET_CONNECTED_USERS";
 const ADD_CONNECTED_USERS = "ADD_CONNECTED_USERS";
+const REMOVE_CONNECTED_USER = "REMOVE_CONNECTED_USER";
+const ADD_ONLINE_USER = "ADD_ONLINE_USER";
 
 export const setActiveChat = (conversationId) => {
   return {
@@ -32,7 +34,14 @@ const gotConversations = (conversations) => {
   };
 };
 
-// set online users from socket event
+export const addOnlineUser = (id) => {
+  return {
+    type: ADD_ONLINE_USER,
+    id
+  };
+};
+
+// set online users so I can easily lookup all online users
 export const setConnectedUsers = (connectedUsers) => {
   return {
     type: SET_CONNECTED_USERS,
@@ -41,10 +50,16 @@ export const setConnectedUsers = (connectedUsers) => {
 };
 
 // add online users to conversations
-export const addConnectedUsers = (connectedUsers) => {
+export const addConnectedUsers = () => {
   return {
-    type: ADD_CONNECTED_USERS,
-    connectedUsers
+    type: ADD_CONNECTED_USERS
+  };
+};
+
+export const removeConnectedUser = (id) => {
+  return {
+    type: REMOVE_CONNECTED_USER,
+    id
   };
 };
 const readMessages = (conversationId) => {
@@ -99,9 +114,30 @@ export const setMessagesAsRead = (conversationId) => async (dispatch) => {
 const reducer = (state = { active: null, all: [], connected: {} }, action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
+      action.conversations.forEach((conversation) => {
+        conversation.otherUser = conversation["user1"] || conversation["user2"];
+      });
       return { ...state, all: action.conversations };
     case SET_ACTIVE_CHAT: {
       return { ...state, active: action.conversationId };
+    }
+    case ADD_ONLINE_USER: {
+      const connectedCopy = { ...state.connected };
+      connectedCopy[action.id] = true;
+
+      const allCopy = state.all.map((conversation) => {
+        if (conversation.otherUser.id === action.id) {
+          console.log("IN!!!");
+          const conversationCopy = { ...conversation };
+          const otherUserCopy = { ...conversationCopy.otherUser };
+          otherUserCopy.online = true;
+          conversationCopy.otherUser = otherUserCopy;
+          return conversationCopy;
+        } else {
+          return conversation;
+        }
+      });
+      return { ...state, all: allCopy, connected: connectedCopy };
     }
     case SET_CONNECTED_USERS: {
       return {
@@ -142,7 +178,7 @@ const reducer = (state = { active: null, all: [], connected: {} }, action) => {
       return { ...state, all: allCopy };
     }
     case CLEAR_ON_LOGOUT: {
-      return { active: null, all: [] };
+      return { active: null, all: [], connected: {} };
     }
     case ADD_CONNECTED_USERS: {
       const allCopy = state.all.map((conversation) => {
@@ -155,6 +191,24 @@ const reducer = (state = { active: null, all: [], connected: {} }, action) => {
         }
       });
       return { ...state, all: allCopy };
+    }
+    case REMOVE_CONNECTED_USER: {
+      const connectedCopy = { ...state.connected };
+      delete connectedCopy[action.id];
+
+      const allCopy = state.all.map((conversation) => {
+        if (conversation.otherUser.id.toString() === action.id) {
+          const conversationCopy = { ...conversation };
+          const otherUserCopy = { ...conversationCopy.otherUser };
+          otherUserCopy.online = false;
+          conversationCopy.otherUser = otherUserCopy;
+          return conversationCopy;
+        } else {
+          return conversation;
+        }
+      });
+
+      return { ...state, all: allCopy, connected: connectedCopy };
     }
     default:
       return state;

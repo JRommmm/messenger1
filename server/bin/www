@@ -10,6 +10,7 @@ require("dotenv").config();
 const { app, sessionStore } = require("../app");
 const http = require("http");
 const db = require("../db");
+const { connected } = require("process");
 
 /**
  * Get port from environment and store in Express.
@@ -33,14 +34,41 @@ const io = require("socket.io")(server);
 const connectedUsers = {};
 
 io.on("connection", (socket) => {
-  socket.on("go-online", (data) => {
-    connectedUsers[data] = socket.id;
-    io.emit("get-online-users", connectedUsers);
+  socket.on("go-online", (id) => {
+    connectedUsers[id] = socket.id;
+    const onlineUsersResponse = {};
+    // create new object so we don't send back the actual socket ids
+    for (const key in connectedUsers) {
+      onlineUsersResponse[key] = true;
+    }
+
+    // send the whole connection object to the person who just went online
+    socket.emit("get-online-users", onlineUsersResponse);
+    // send the single socket connection to everyone else who is already online
+    socket.broadcast.emit("add-user", id);
   });
 
   socket.on("new-message", (data) => {
     const socketId = connectedUsers[data.recipientId];
     io.to(socketId).emit("new-message", data.message);
+  });
+
+  socket.on("logout", () => {
+    for (const key in connectedUsers) {
+      if (connectedUsers[key] === socket.id) {
+        socket.broadcast.emit("disconnect-user", key);
+        delete connectedUsers[key];
+      }
+    }
+  });
+
+  socket.on("disconnect", () => {
+    for (const key in connectedUsers) {
+      if (connectedUsers[key] === socket.id) {
+        socket.broadcast.emit("disconnect-user", key);
+        delete connectedUsers[key];
+      }
+    }
   });
 });
 

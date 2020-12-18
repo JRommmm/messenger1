@@ -23,7 +23,6 @@ const Home = (props) => {
   useEffect(() => {
     if (user.id) {
       setIsLoggedIn(true);
-      socket.emit("go-online", user.id);
     }
   }, [user.id]);
 
