@@ -46,7 +46,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Sidebar = (props) => {
   const classes = useStyles();
-  const { user, conversations } = props;
+  const user = props.user || {};
+  const conversations = props.conversations || [];
 
   return (
     <Box className={classes.container}>
@@ -60,8 +61,6 @@ const Sidebar = (props) => {
       <Typography className={classes.chatsTitle}>Chats</Typography>
       <Search />
       {conversations.map((conversation) => {
-        // conversation.otherUser = conversation["user1"] || conversation["user2"];
-
         return <Chat conversation={conversation} key={conversation.id} />;
       })}
     </Box>
@@ -71,7 +70,7 @@ const Sidebar = (props) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    conversations: state.conversations.all
+    conversations: state.conversations
   };
 };
 

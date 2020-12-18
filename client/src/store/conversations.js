@@ -2,70 +2,17 @@ import axios from "axios";
 import socket from "../socket";
 import store from "../store/index";
 
-// TODO: refactor into multiple reducers
-
 const GET_CONVERSATIONS = "GET_CONVERSATIONS";
-const READ_MESSAGES = "READ_MESSAGES";
 const SET_MESSAGE = "SEND_MESSAGE";
-const CLEAR_ON_LOGOUT = "CLEAR_ON_LOGOUT";
-const SET_ACTIVE_CHAT = "GET_ACTIVE_CHAT";
-const SET_CONNECTED_USERS = "SET_CONNECTED_USERS";
-const ADD_CONNECTED_USERS = "ADD_CONNECTED_USERS";
-const REMOVE_CONNECTED_USER = "REMOVE_CONNECTED_USER";
+const READ_MESSAGES = "READ_MESSAGES";
+const ADD_ONLINE_USERS = "ADD_ONLINE_USERS";
 const ADD_ONLINE_USER = "ADD_ONLINE_USER";
-
-export const setActiveChat = (conversationId) => {
-  return {
-    type: SET_ACTIVE_CHAT,
-    conversationId
-  };
-};
-
-export const clearOnLogout = () => {
-  return {
-    type: CLEAR_ON_LOGOUT
-  };
-};
+const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 
 const gotConversations = (conversations) => {
   return {
     type: GET_CONVERSATIONS,
     conversations
-  };
-};
-
-export const addOnlineUser = (id) => {
-  return {
-    type: ADD_ONLINE_USER,
-    id
-  };
-};
-
-// set online users so I can easily lookup all online users
-export const setConnectedUsers = (connectedUsers) => {
-  return {
-    type: SET_CONNECTED_USERS,
-    connectedUsers
-  };
-};
-
-// add online users to conversations
-export const addConnectedUsers = () => {
-  return {
-    type: ADD_CONNECTED_USERS
-  };
-};
-
-export const removeConnectedUser = (id) => {
-  return {
-    type: REMOVE_CONNECTED_USER,
-    id
-  };
-};
-const readMessages = (conversationId) => {
-  return {
-    type: READ_MESSAGES,
-    conversationId
   };
 };
 
@@ -76,27 +23,56 @@ export const setNewMessage = (message, userId) => {
   };
 };
 
-// message format: {recipientId, text, conversationId} ---> conversationId will be set to null if its a brand new conversation
-export const postMessage = (message) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/api/messages", message);
-    const currentState = store.getState();
-    dispatch(setNewMessage(data, currentState.user.id));
-    const connectedUsers = currentState.conversations.connected;
+const readMessages = (conversationId) => {
+  return {
+    type: READ_MESSAGES,
+    conversationId
+  };
+};
 
-    if (connectedUsers[message.recipientId]) {
-      socket.emit("new-message", { message: data, recipientId: message.recipientId });
-    }
-  } catch (error) {
-    console.error(error);
-  }
+// add online users to conversations after conversations load
+export const addOnlineUsers = (onlineUsers) => {
+  return {
+    type: ADD_ONLINE_USERS,
+    onlineUsers
+  };
+};
+
+export const addOnlineUser = (id) => {
+  return {
+    type: ADD_ONLINE_USER,
+    id
+  };
+};
+
+export const removeOfflineUser = (id) => {
+  return {
+    type: REMOVE_OFFLINE_USER,
+    id
+  };
 };
 
 export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
     dispatch(gotConversations(data));
-    dispatch(addConnectedUsers());
+    const onlineUsers = store.getState().onlineUsers;
+    dispatch(addOnlineUsers(onlineUsers));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// message format to send: {recipientId, text, conversationId}
+// conversationId will be set to null if its a brand new conversation
+export const postMessage = (message) => async (dispatch) => {
+  try {
+    const { data } = await axios.post("/api/messages", message);
+    const currentState = store.getState();
+    dispatch(setNewMessage(data, currentState.user.id));
+    if (currentState.onlineUsers.includes(message.recipientId.toString())) {
+      socket.emit("new-message", { message: data, recipientId: message.recipientId });
+    }
   } catch (error) {
     console.error(error);
   }
@@ -111,104 +87,78 @@ export const setMessagesAsRead = (conversationId) => async (dispatch) => {
   }
 };
 
-const reducer = (state = { active: null, all: [], connected: {} }, action) => {
+const reducer = (state = [], action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
-      action.conversations.forEach((conversation) => {
-        conversation.otherUser = conversation["user1"] || conversation["user2"];
+      action.conversations.forEach((convo) => {
+        convo.otherUser = convo["user1"] || convo["user2"];
       });
-      return { ...state, all: action.conversations };
-    case SET_ACTIVE_CHAT: {
-      return { ...state, active: action.conversationId };
-    }
-    case ADD_ONLINE_USER: {
-      const connectedCopy = { ...state.connected };
-      connectedCopy[action.id] = true;
+      return action.conversations;
 
-      const allCopy = state.all.map((conversation) => {
-        if (conversation.otherUser.id === action.id) {
-          console.log("IN!!!");
-          const conversationCopy = { ...conversation };
-          const otherUserCopy = { ...conversationCopy.otherUser };
-          otherUserCopy.online = true;
-          conversationCopy.otherUser = otherUserCopy;
-          return conversationCopy;
-        } else {
-          return conversation;
-        }
-      });
-      return { ...state, all: allCopy, connected: connectedCopy };
-    }
-    case SET_CONNECTED_USERS: {
-      return {
-        ...state,
-        connected: action.connectedUsers
-      };
-    }
     case SET_MESSAGE: {
       const { message, userId } = action.payload;
-      const allCopy = state.all.map((conversation) => {
-        if (conversation.id === message.conversationId) {
-          const conversationCopy = { ...conversation };
+
+      return state.map((convo) => {
+        if (convo.id === message.conversationId) {
+          const convoCopy = { ...convo };
           if (message.senderId !== userId) {
-            conversationCopy.unreadCount++;
+            convoCopy.unreadCount++;
           }
-          const messagesCopy = [...conversationCopy.messages];
-          messagesCopy.push(message);
-          conversationCopy.messages = messagesCopy;
-          conversationCopy.latestMessageText = message.text;
-          return conversationCopy;
+          convoCopy.messages.push(message);
+          convoCopy.latestMessageText = message.text;
+          return convoCopy;
         } else {
-          return conversation;
+          return convo;
         }
       });
-
-      return { ...state, all: allCopy };
     }
+
     case READ_MESSAGES: {
-      const allCopy = state.all.map((conversation) => {
-        if (conversation.id === action.conversationId) {
-          const conversationCopy = { ...conversation };
-          conversationCopy.unreadCount = 0;
-          return conversationCopy;
+      return state.map((convo) => {
+        if (convo.id === action.conversationId) {
+          const convoCopy = { ...convo };
+          convoCopy.unreadCount = 0;
+          return convoCopy;
         } else {
-          return conversation;
+          return convo;
         }
       });
-      return { ...state, all: allCopy };
     }
-    case CLEAR_ON_LOGOUT: {
-      return { active: null, all: [], connected: {} };
-    }
-    case ADD_CONNECTED_USERS: {
-      const allCopy = state.all.map((conversation) => {
-        if (state.connected[conversation.otherUser.id]) {
-          const conversationCopy = { ...conversation };
-          conversationCopy.otherUser.online = true;
-          return conversationCopy;
-        } else {
-          return conversation;
-        }
-      });
-      return { ...state, all: allCopy };
-    }
-    case REMOVE_CONNECTED_USER: {
-      const connectedCopy = { ...state.connected };
-      delete connectedCopy[action.id];
 
-      const allCopy = state.all.map((conversation) => {
-        if (conversation.otherUser.id.toString() === action.id) {
-          const conversationCopy = { ...conversation };
-          const otherUserCopy = { ...conversationCopy.otherUser };
-          otherUserCopy.online = false;
-          conversationCopy.otherUser = otherUserCopy;
-          return conversationCopy;
+    case ADD_ONLINE_USERS: {
+      return state.map((convo) => {
+        if (action.onlineUsers.includes(convo.otherUser.id.toString())) {
+          const convoCopy = { ...convo };
+          convoCopy.otherUser.online = true;
+          return convoCopy;
         } else {
-          return conversation;
+          return convo;
         }
       });
+    }
 
-      return { ...state, all: allCopy, connected: connectedCopy };
+    case ADD_ONLINE_USER: {
+      return state.map((convo) => {
+        if (convo.otherUser.id == action.id) {
+          const convoCopy = { ...convo };
+          convoCopy.otherUser.online = true;
+          return convoCopy;
+        } else {
+          return convo;
+        }
+      });
+    }
+
+    case REMOVE_OFFLINE_USER: {
+      return state.map((convo) => {
+        if (convo.otherUser.id == action.id) {
+          const convoCopy = { ...convo };
+          convoCopy.otherUser.online = false;
+          return convoCopy;
+        } else {
+          return convo;
+        }
+      });
     }
     default:
       return state;

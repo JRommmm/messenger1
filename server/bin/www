@@ -10,7 +10,6 @@ require("dotenv").config();
 const { app, sessionStore } = require("../app");
 const http = require("http");
 const db = require("../db");
-const { connected } = require("process");
 
 /**
  * Get port from environment and store in Express.
@@ -31,42 +30,37 @@ const server = http.createServer(app);
 
 const io = require("socket.io")(server);
 
-const connectedUsers = {};
+const onlineUsers = {};
 
 io.on("connection", (socket) => {
   socket.on("go-online", (id) => {
-    connectedUsers[id] = socket.id;
-    const onlineUsersResponse = {};
-    // create new object so we don't send back the actual socket ids
-    for (const key in connectedUsers) {
-      onlineUsersResponse[key] = true;
-    }
-
-    // send the whole connection object to the person who just went online
+    onlineUsers[id] = socket.id;
+    // send all connected users to the user who just went online
+    const onlineUsersResponse = Object.keys(onlineUsers);
     socket.emit("get-online-users", onlineUsersResponse);
-    // send the single socket connection to everyone else who is already online
-    socket.broadcast.emit("add-user", id);
+    // send the user who just went online to everyone else who is already online
+    socket.broadcast.emit("add-online-user", id);
   });
 
   socket.on("new-message", (data) => {
-    const socketId = connectedUsers[data.recipientId];
+    const socketId = onlineUsers[data.recipientId];
     io.to(socketId).emit("new-message", data.message);
   });
 
   socket.on("logout", () => {
-    for (const key in connectedUsers) {
-      if (connectedUsers[key] === socket.id) {
-        socket.broadcast.emit("disconnect-user", key);
-        delete connectedUsers[key];
+    for (const key in onlineUsers) {
+      if (onlineUsers[key] === socket.id) {
+        socket.broadcast.emit("add-offline-user", key);
+        delete onlineUsers[key];
       }
     }
   });
 
   socket.on("disconnect", () => {
-    for (const key in connectedUsers) {
-      if (connectedUsers[key] === socket.id) {
-        socket.broadcast.emit("disconnect-user", key);
-        delete connectedUsers[key];
+    for (const key in onlineUsers) {
+      if (onlineUsers[key] === socket.id) {
+        socket.broadcast.emit("add-offline-user", key);
+        delete onlineUsers[key];
       }
     }
   });

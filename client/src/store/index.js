@@ -4,7 +4,24 @@ import thunkMiddleware from "redux-thunk";
 
 import user from "./user";
 import conversations from "./conversations";
+import activeConversation from "./activeConversation";
+import onlineUsers from "./onlineUsers";
 
-const reducer = combineReducers({ user, conversations });
+const CLEAR_ON_LOGOUT = "CLEAR_ON_LOGOUT";
 
-export default createStore(reducer, applyMiddleware(thunkMiddleware, loggerMiddleware));
+export const clearOnLogout = () => {
+  return {
+    type: CLEAR_ON_LOGOUT
+  };
+};
+
+const appReducer = combineReducers({ user, conversations, activeConversation, onlineUsers });
+const rootReducer = (state, action) => {
+  if (action.type === CLEAR_ON_LOGOUT) {
+    // set state to initial state
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
+
+export default createStore(rootReducer, applyMiddleware(thunkMiddleware, loggerMiddleware));
