@@ -26,18 +26,23 @@ const useStyles = makeStyles((theme) => ({
 
 const Search = (props) => {
   const classes = useStyles();
+  const { handleSearch, handleSubmit } = props;
   return (
-    <FormControl fullWidth hiddenLabel>
-      <FilledInput
-        classes={{ root: classes.filledInput, input: classes.input }}
-        disableUnderline
-        placeholder="Search"
-        startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        }></FilledInput>
-    </FormControl>
+    <form onSubmit={handleSubmit}>
+      <FormControl fullWidth hiddenLabel>
+        <FilledInput
+          name="search"
+          onChange={handleSearch}
+          classes={{ root: classes.filledInput, input: classes.input }}
+          disableUnderline
+          placeholder="Search"
+          startAdornment={
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          }></FilledInput>
+      </FormControl>
+    </form>
   );
 };
 

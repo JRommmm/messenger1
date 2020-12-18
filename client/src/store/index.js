@@ -6,6 +6,7 @@ import user from "./user";
 import conversations from "./conversations";
 import activeConversation from "./activeConversation";
 import onlineUsers from "./onlineUsers";
+import searchedConversations from "./searchedConversations";
 
 const CLEAR_ON_LOGOUT = "CLEAR_ON_LOGOUT";
 
@@ -15,7 +16,13 @@ export const clearOnLogout = () => {
   };
 };
 
-const appReducer = combineReducers({ user, conversations, activeConversation, onlineUsers });
+const appReducer = combineReducers({
+  user,
+  conversations,
+  activeConversation,
+  onlineUsers,
+  searchedConversations
+});
 const rootReducer = (state, action) => {
   if (action.type === CLEAR_ON_LOGOUT) {
     // set state to initial state

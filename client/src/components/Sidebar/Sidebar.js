@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { Search, Chat, BadgeAvatar } from "./index.js";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
+import { searchUsers } from "../../store/searchedConversations";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -47,7 +48,38 @@ const useStyles = makeStyles((theme) => ({
 const Sidebar = (props) => {
   const classes = useStyles();
   const user = props.user || {};
-  const conversations = props.conversations || [];
+
+  const [conversations, setConversations] = useState([]);
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    if (props.conversations) {
+      setConversations(props.conversations);
+    }
+  }, [props.conversations]);
+
+  useEffect(() => {
+    setConversations(props.searchedConversations);
+  }, [props.searchedConversations]);
+
+  // search through already loaded convos
+  const handleSearch = (event) => {
+    if (event.target.value === "") {
+      setConversations(props.conversations);
+    } else {
+      setConversations(
+        props.conversations.filter((convo) => {
+          return convo.otherUser.username.toLowerCase().includes(event.target.value.toLowerCase());
+        })
+      );
+    }
+  };
+
+  // find a user by username
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await props.search(event.target.search.value);
+  };
 
   return (
     <Box className={classes.container}>
@@ -59,9 +91,9 @@ const Sidebar = (props) => {
         </Box>
       </Box>
       <Typography className={classes.chatsTitle}>Chats</Typography>
-      <Search />
+      <Search handleSearch={handleSearch} handleSubmit={handleSubmit} />
       {conversations.map((conversation) => {
-        return <Chat conversation={conversation} key={conversation.id} />;
+        return <Chat conversation={conversation} key={conversation.otherUser.username} />;
       })}
     </Box>
   );
@@ -70,8 +102,17 @@ const Sidebar = (props) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    conversations: state.conversations
+    conversations: state.conversations,
+    searchedConversations: state.searchedConversations
   };
 };
 
-export default connect(mapStateToProps)(Sidebar);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    search: (username) => {
+      dispatch(searchUsers(username));
+    }
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Sidebar);

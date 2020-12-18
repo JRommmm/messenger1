@@ -1,4 +1,5 @@
 import axios from "axios";
+import { remove } from "./searchedConversations";
 import socket from "../socket";
 import store from "../store/index";
 
@@ -8,6 +9,7 @@ const READ_MESSAGES = "READ_MESSAGES";
 const ADD_ONLINE_USERS = "ADD_ONLINE_USERS";
 const ADD_ONLINE_USER = "ADD_ONLINE_USER";
 const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
+const ADD_CONVERSATION = "ADD_CONVERSATION";
 
 const gotConversations = (conversations) => {
   return {
@@ -52,6 +54,14 @@ export const removeOfflineUser = (id) => {
   };
 };
 
+// add new conversation when sending a new message
+export const addConversation = (newConvo) => {
+  return {
+    type: ADD_CONVERSATION,
+    newConvo
+  };
+};
+
 export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
@@ -73,6 +83,18 @@ export const postMessage = (message) => async (dispatch) => {
     if (currentState.onlineUsers.includes(message.recipientId.toString())) {
       socket.emit("new-message", { message: data, recipientId: message.recipientId });
     }
+
+    // if a convo hasn't been created yet, remove from fake convos and merge
+    if (!message.conversationId) {
+      const fakeConvo = currentState.searchedConversations.find(
+        (convo) => convo.otherUser.id == message.recipientId
+      );
+      const newConvo = { ...fakeConvo };
+      newConvo.id = data.conversationId;
+      newConvo.messages.push(data);
+      dispatch(addConversation(newConvo));
+      dispatch(remove(message.recipientId));
+    }
   } catch (error) {
     console.error(error);
   }
@@ -91,9 +113,11 @@ const reducer = (state = [], action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
       action.conversations.forEach((convo) => {
-        convo.otherUser = convo["user1"] || convo["user2"];
+        convo.otherUser = convo["user1"] || convo["user2"] || convo["otherUser"];
       });
       return action.conversations;
+    case ADD_CONVERSATION:
+      return [...state, action.newConvo];
 
     case SET_MESSAGE: {
       const { message, userId } = action.payload;

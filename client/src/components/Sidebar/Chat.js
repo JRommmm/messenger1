@@ -63,18 +63,18 @@ const useStyles = makeStyles((theme) => ({
 const Chat = (props) => {
   const classes = useStyles();
   const { conversation } = props;
-  const { latestMessageText, unreadCount, otherUser } = conversation;
+  const { latestMessageText, otherUser } = conversation;
 
   const handleClick = async (conversation) => {
-    await props.setActiveChat(conversation.id);
+    await props.setActiveChat(conversation.otherUser.username);
     // set unread messages to read once chat loads
-    if (unreadCount > 0) {
+    if (conversation.unreadCount > 0) {
       await props.setMessagesAsRead(conversation.id);
     }
   };
 
   let previewTextClass = "";
-  if (unreadCount > 0) {
+  if (conversation.unreadCount > 0) {
     previewTextClass = classes.unread;
   } else {
     previewTextClass = classes.read;
@@ -93,7 +93,9 @@ const Chat = (props) => {
           <Typography className={classes.username}>{otherUser.username}</Typography>
           <Typography className={previewTextClass}>{latestMessageText}</Typography>
         </Box>
-        {unreadCount > 0 && <Box className={classes.notification}>{unreadCount}</Box>}
+        {conversation.unreadCount > 0 && (
+          <Box className={classes.notification}>{conversation.unreadCount}</Box>
+        )}
       </Box>
     </Box>
   );
