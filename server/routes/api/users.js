@@ -18,16 +18,6 @@ router.get("/:username", async (req, res, next) => {
       }
     });
 
-    // const user = await User.findOne({
-    //   where: {
-    //     username: req.params.username
-    //   }
-    // });
-    // if (!user) {
-    //   return res.json({});
-    // }
-    // const conversation = await Conversation.findConversation(user.username, req.user.id);
-    // res.json(conversation || { id: null, otherUser: user, messages: [] });
     res.json(users);
   } catch (error) {
     next(error);
