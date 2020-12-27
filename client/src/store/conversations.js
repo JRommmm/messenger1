@@ -6,7 +6,6 @@ import store from "../store/index";
 const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 const SET_MESSAGE = "SEND_MESSAGE";
 const READ_MESSAGES = "READ_MESSAGES";
-const ADD_ONLINE_USERS = "ADD_ONLINE_USERS";
 const ADD_ONLINE_USER = "ADD_ONLINE_USER";
 const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
@@ -29,14 +28,6 @@ const readMessages = (conversationId) => {
   return {
     type: READ_MESSAGES,
     conversationId
-  };
-};
-
-// add online users to conversations after conversations load
-export const addOnlineUsers = (onlineUsers) => {
-  return {
-    type: ADD_ONLINE_USERS,
-    onlineUsers
   };
 };
 
@@ -66,8 +57,6 @@ export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
     dispatch(gotConversations(data));
-    const onlineUsers = store.getState().onlineUsers;
-    dispatch(addOnlineUsers(onlineUsers));
   } catch (error) {
     console.error(error);
   }
@@ -80,9 +69,9 @@ export const postMessage = (message) => async (dispatch) => {
     const { data } = await axios.post("/api/messages", message);
     const currentState = store.getState();
     dispatch(setNewMessage(data, currentState.user.id));
-    if (currentState.onlineUsers.includes(message.recipientId.toString())) {
-      socket.emit("new-message", { message: data, recipientId: message.recipientId });
-    }
+    // if (currentState.onlineUsers.includes(message.recipientId.toString())) {
+    socket.emit("new-message", { message: data, recipientId: message.recipientId });
+    // }
 
     // if a convo hasn't been created yet, remove from fake convos and merge
     if (!message.conversationId) {
@@ -112,9 +101,6 @@ export const setMessagesAsRead = (conversationId) => async (dispatch) => {
 const reducer = (state = [], action) => {
   switch (action.type) {
     case GET_CONVERSATIONS:
-      action.conversations.forEach((convo) => {
-        convo.otherUser = convo["user1"] || convo["user2"] || convo["otherUser"];
-      });
       return action.conversations;
     case ADD_CONVERSATION:
       return [...state, action.newConvo];
@@ -142,18 +128,6 @@ const reducer = (state = [], action) => {
         if (convo.id === action.conversationId) {
           const convoCopy = { ...convo };
           convoCopy.unreadCount = 0;
-          return convoCopy;
-        } else {
-          return convo;
-        }
-      });
-    }
-
-    case ADD_ONLINE_USERS: {
-      return state.map((convo) => {
-        if (action.onlineUsers.includes(convo.otherUser.id.toString())) {
-          const convoCopy = { ...convo };
-          convoCopy.otherUser.online = true;
           return convoCopy;
         } else {
           return convo;

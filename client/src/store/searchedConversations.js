@@ -22,8 +22,8 @@ export const searchUsers = (username) => async (dispatch) => {
   try {
     const { data } = await axios.get(`/api/users/${username}`);
     const currentConvos = store.getState().conversations;
-    const onlineUsers = store.getState().onlineUsers;
-    dispatch(search(data, currentConvos, onlineUsers));
+    // const onlineUsers = store.getState().onlineUsers;
+    dispatch(search(data, currentConvos));
   } catch (error) {
     console.error(error);
   }
@@ -36,16 +36,16 @@ const reducer = (state = [], action) => {
         (convo) => convo.otherUser.username
       );
 
-      const fakeConvos = action.payload.users
-        .filter((user) => !currentConvoUsernames.includes(user.username))
-        .map((user) => {
-          if (action.payload.onlineUsers.includes(user.id.toString())) {
-            user.online = true;
-          }
-          return { otherUser: user, messages: [] };
-        });
+      // const fakeConvos = action.payload.users
+      //   .filter((user) => !currentConvoUsernames.includes(user.username))
+      //   .map((user) => {
+      //     if (action.payload.onlineUsers.includes(user.id.toString())) {
+      //       user.online = true;
+      //     }
+      //     return { otherUser: user, messages: [] };
+      //   });
 
-      return fakeConvos;
+      return { ...state };
     case REMOVE: {
       return state.filter((convo) => convo.otherUser.id !== action.userId);
     }

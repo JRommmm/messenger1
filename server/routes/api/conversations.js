@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const { User, Conversation, Message } = require("../../db/models");
 const { Op } = require("sequelize");
+const onlineUsers = require("../../onlineUsers");
 
 // set messages as read by reciever (messages will be unread as default upon creation)
 // will be called after all messages load for an individual conversation
@@ -45,6 +46,7 @@ router.put("/read", async (req, res, next) => {
 
 // get all conversations for a user, include latest message text for preview and count of unread messages for notifcations, and all messages
 // include user model so we have info on username/profile pic (don't include current user info)
+// TODO: for scalability, implement lazy loading on scroll
 
 router.get("/", async (req, res, next) => {
   try {
@@ -69,6 +71,7 @@ router.get("/", async (req, res, next) => {
               [Op.not]: userId
             }
           },
+          attributes: ["id", "username", "photoUrl"],
           required: false
         },
         {
@@ -79,6 +82,7 @@ router.get("/", async (req, res, next) => {
               [Op.not]: userId
             }
           },
+          attributes: ["id", "username", "photoUrl"],
           required: false
         }
       ],
@@ -88,6 +92,20 @@ router.get("/", async (req, res, next) => {
     for (let i = 0; i < conversations.length; i++) {
       const data = await Conversation.getPreview(conversations[i].id, userId);
       const conversationJSON = conversations[i].toJSON();
+      if (conversationJSON.user1) {
+        conversationJSON.otherUser = conversationJSON.user1;
+        delete conversationJSON.user1;
+      } else if (conversationJSON.user2) {
+        conversationJSON.otherUser = conversationJSON.user2;
+        delete conversationJSON.user2;
+      }
+
+      if (onlineUsers[conversationJSON.otherUser.id]) {
+        conversationJSON.otherUser.online = true;
+      } else {
+        conversationJSON.otherUser.online = false;
+      }
+
       conversationJSON.latestMessageText = data.latestMessageText;
       conversationJSON.unreadCount = data.unreadCount;
       conversations[i] = conversationJSON;
