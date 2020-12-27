@@ -22,7 +22,7 @@ Conversation.findConversation = async function (user1Id, user2Id) {
   return conversation;
 };
 
-Conversation.getUnreadCount = async function (conversationId, userId) {
+Conversation.getPreview = async function (conversationId, userId) {
   const conversationWithLatest = await this.findByPk(conversationId, {
     include: [
       {

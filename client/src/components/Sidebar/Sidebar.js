@@ -50,7 +50,6 @@ const Sidebar = (props) => {
   const user = props.user || {};
 
   const [conversations, setConversations] = useState([]);
-  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     if (props.conversations) {

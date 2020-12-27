@@ -23,22 +23,19 @@ router.put("/read", async (req, res, next) => {
       return res.sendStatus(401);
     }
 
-    // find all messages that weren't sent by current user and haven't been read
-    const messages = await Message.findAll({
-      where: {
-        conversationId,
-        read: false,
-        senderId: {
-          [Op.not]: req.user.id
+    // set all unread messages to read that weren't sent by current user
+    await Message.update(
+      { read: true },
+      {
+        where: {
+          conversationId,
+          read: false,
+          senderId: {
+            [Op.not]: req.user.id
+          }
         }
       }
-    });
-
-    // set all unread messages to read
-    for (const message of messages) {
-      message.read = true;
-      await message.save();
-    }
+    );
 
     return res.sendStatus(204);
   } catch (error) {
@@ -63,7 +60,7 @@ router.get("/", async (req, res, next) => {
         }
       },
       include: [
-        { model: Message, order: ["id", "DESC"] },
+        { model: Message, order: ["createdAt", "DESC"] },
         {
           model: User,
           as: "user1",
@@ -89,7 +86,7 @@ router.get("/", async (req, res, next) => {
     });
 
     for (let i = 0; i < conversations.length; i++) {
-      const data = await Conversation.getUnreadCount(conversations[i].id, userId);
+      const data = await Conversation.getPreview(conversations[i].id, userId);
       const conversationJSON = conversations[i].toJSON();
       conversationJSON.latestMessageText = data.latestMessageText;
       conversationJSON.unreadCount = data.unreadCount;
