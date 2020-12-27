@@ -46,8 +46,7 @@ router.put("/read", async (req, res, next) => {
 
 // get all conversations for a user, include latest message text for preview and count of unread messages for notifcations, and all messages
 // include user model so we have info on username/profile pic (don't include current user info)
-// TODO: for scalability, implement lazy loading on scroll
-
+// TODO: for scalability, implement lazy loading & infinite scroll
 router.get("/", async (req, res, next) => {
   try {
     if (!req.user) {
@@ -61,6 +60,7 @@ router.get("/", async (req, res, next) => {
           user2Id: userId
         }
       },
+      order: [[Message, "createdAt", "DESC"]],
       include: [
         { model: Message, order: ["createdAt", "DESC"] },
         {
@@ -86,7 +86,7 @@ router.get("/", async (req, res, next) => {
           required: false
         }
       ],
-      attributes: ["id"]
+      attributes: ["id", "updatedAt"]
     });
 
     for (let i = 0; i < conversations.length; i++) {

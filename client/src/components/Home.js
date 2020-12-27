@@ -37,7 +37,7 @@ const Home = (props) => {
   }
 
   const handleLogout = async () => {
-    await logout();
+    await logout(user.id);
   };
 
   return (
@@ -64,8 +64,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    logout: () => {
-      dispatch(logout());
+    logout: (id) => {
+      dispatch(logout(id));
       dispatch(clearOnLogout());
     },
     fetchConversations: () => {

@@ -69,10 +69,7 @@ export const postMessage = (message) => async (dispatch) => {
     const { data } = await axios.post("/api/messages", message);
     const currentState = store.getState();
     dispatch(setNewMessage(data, currentState.user.id));
-    // if (currentState.onlineUsers.includes(message.recipientId.toString())) {
     socket.emit("new-message", { message: data, recipientId: message.recipientId });
-    // }
-
     // if a convo hasn't been created yet, remove from fake convos and merge
     if (!message.conversationId) {
       const fakeConvo = currentState.searchedConversations.find(

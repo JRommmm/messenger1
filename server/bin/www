@@ -41,20 +41,20 @@ io.on("connection", (socket) => {
 
   socket.on("new-message", (data) => {
     const recipientSocketId = onlineUsers[data.recipientId];
+    // send message to recipient if they are online
     if (recipientSocketId) {
       io.to(recipientSocketId).emit("new-message", data.message);
     }
   });
 
-  socket.on("logout", () => {
-    for (const key in onlineUsers) {
-      if (onlineUsers[key] === socket.id) {
-        socket.broadcast.emit("add-offline-user", key);
-        delete onlineUsers[key];
-      }
-    }
+  socket.on("logout", (id) => {
+    socket.broadcast.emit("add-offline-user", id);
+    delete onlineUsers[id];
   });
 
+  /*
+using for loop here because I need to search for the socket.id value in the onlineUsers object to find out which user got disconnected. The object is structured as {userId: socket.id}. I thought about structuring it with the socket id as the key, but this is the only time I need to look up user id by socket id rather than socket id by user id
+*/
   socket.on("disconnect", () => {
     for (const key in onlineUsers) {
       if (onlineUsers[key] === socket.id) {

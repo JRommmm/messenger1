@@ -53,11 +53,11 @@ export const login = (credentials) => async (dispatch) => {
   }
 };
 
-export const logout = () => async (dispatch) => {
+export const logout = (id) => async (dispatch) => {
   try {
     await axios.delete("/auth/logout");
     dispatch(gotUser({}));
-    socket.emit("logout");
+    socket.emit("logout", id);
   } catch (error) {
     console.error(error);
   }
