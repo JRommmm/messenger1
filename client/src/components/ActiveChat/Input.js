@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
 const Input = (props) => {
   const classes = useStyles();
   const [text, setText] = useState("");
-  const { postMessage, otherUser, conversationId } = props;
+  const { postMessage, otherUser, conversationId, userId } = props;
 
   const handleChange = (event) => {
     setText(event.target.value);
@@ -29,7 +29,7 @@ const Input = (props) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const message = { text: event.target.text.value, recipientId: otherUser.id, conversationId };
-    await postMessage(message);
+    await postMessage(message, userId);
 
     setText("");
   };
@@ -52,8 +52,8 @@ const Input = (props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    postMessage: (message) => {
-      dispatch(postMessage(message));
+    postMessage: (message, userId) => {
+      dispatch(postMessage(message, userId));
     }
   };
 };

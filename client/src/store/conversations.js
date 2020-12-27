@@ -64,11 +64,11 @@ export const fetchConversations = () => async (dispatch) => {
 
 // message format to send: {recipientId, text, conversationId}
 // conversationId will be set to null if its a brand new conversation
-export const postMessage = (message) => async (dispatch) => {
+export const postMessage = (message, userId) => async (dispatch) => {
   try {
     const { data } = await axios.post("/api/messages", message);
     const currentState = store.getState();
-    dispatch(setNewMessage(data, currentState.user.id));
+    dispatch(setNewMessage(data, userId));
     socket.emit("new-message", { message: data, recipientId: message.recipientId });
     // if a convo hasn't been created yet, remove from fake convos and merge
     if (!message.conversationId) {
@@ -134,7 +134,7 @@ const reducer = (state = [], action) => {
 
     case ADD_ONLINE_USER: {
       return state.map((convo) => {
-        if (convo.otherUser.id == action.id) {
+        if (convo.otherUser.id === action.id) {
           const convoCopy = { ...convo };
           convoCopy.otherUser.online = true;
           return convoCopy;
@@ -146,7 +146,7 @@ const reducer = (state = [], action) => {
 
     case REMOVE_OFFLINE_USER: {
       return state.map((convo) => {
-        if (convo.otherUser.id == action.id) {
+        if (convo.otherUser.id === action.id) {
           const convoCopy = { ...convo };
           convoCopy.otherUser.online = false;
           return convoCopy;
