@@ -33,32 +33,52 @@ const io = require("socket.io")(server);
 
 io.on("connection", (socket) => {
   socket.on("go-online", (id) => {
-    onlineUsers[id] = socket.id;
+    if (!onlineUsers[id]) {
+      onlineUsers[id] = new Set([socket.id]);
+    } else {
+      onlineUsers[id].add(socket.id);
+    }
+    console.log(onlineUsers);
     // send the user who just went online to everyone else who is already online
     socket.broadcast.emit("add-online-user", id);
   });
 
   socket.on("new-message", (data) => {
-    const recipientSocketId = onlineUsers[data.recipientId];
+    const recipientSockets = onlineUsers[data.recipientId];
     // send message to recipient if they are online
-    if (recipientSocketId) {
-      io.to(recipientSocketId).emit("new-message", data.message);
+    if (recipientSockets) {
+      // send to all connected sockets for this user
+      recipientSockets.forEach((socket) => {
+        io.to(socket).emit("new-message", data.message);
+      });
     }
   });
 
   socket.on("logout", (id) => {
-    socket.broadcast.emit("add-offline-user", id);
-    delete onlineUsers[id];
+    if (onlineUsers[id]) {
+      let userSockets = onlineUsers[id];
+      userSockets.delete(socket.id);
+
+      if (userSockets.size === 0) {
+        delete onlineUsers[id];
+        socket.broadcast.emit("remove-offline-user", id);
+      }
+    }
   });
 
   /*
-using for loop here because I need to search for the socket.id value in the onlineUsers object to find out which user got disconnected. The object is structured as {userId: socket.id}. I thought about structuring it with the socket id as the key, but this is the only time I need to look up user id by socket id rather than socket id by user id
+using for loop here to search for the socket.id value in the onlineUsers object to find out which user got disconnected. I thought about structuring it with the socket id as the key, but this is the only time I need to look up user id by socket id rather than socket id by user id
 */
   socket.on("disconnect", () => {
     for (const key in onlineUsers) {
-      if (onlineUsers[key] === socket.id) {
-        socket.broadcast.emit("add-offline-user", key);
-        delete onlineUsers[key];
+      if (onlineUsers[key].has(socket.id)) {
+        let userSockets = onlineUsers[key];
+        userSockets.delete(socket.id);
+
+        if (userSockets.size === 0) {
+          delete onlineUsers[key];
+          socket.broadcast.emit("remove-offline-user", id);
+        }
       }
     }
   });
