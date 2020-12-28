@@ -16,4 +16,17 @@ const Message = db.define("message", {
   }
 });
 
+Message.countUnreadMessages = async (conversationId, userId) => {
+  const unreadCount = await Message.count({
+    where: {
+      conversationId,
+      senderId: {
+        [Sequelize.Op.not]: userId
+      },
+      read: false
+    }
+  });
+  return unreadCount;
+};
+
 module.exports = Message;

@@ -77,7 +77,7 @@ using for loop here to search for the socket.id value in the onlineUsers object 
 
         if (userSockets.size === 0) {
           delete onlineUsers[key];
-          socket.broadcast.emit("remove-offline-user", id);
+          socket.broadcast.emit("remove-offline-user", key);
         }
       }
     }

@@ -45,8 +45,8 @@ router.put("/read", async (req, res, next) => {
 });
 
 // get all conversations for a user, include latest message text for preview and count of unread messages for notifcations, and all messages
-// include user model so we have info on username/profile pic (don't include current user info)
-// TODO: for scalability, implement lazy loading & infinite scroll
+// include other user model so we have info on username/profile pic (don't include current user info)
+// TODO: for scalability, implement lazy loading
 router.get("/", async (req, res, next) => {
   try {
     if (!req.user) {
@@ -60,6 +60,7 @@ router.get("/", async (req, res, next) => {
           user2Id: userId
         }
       },
+      attributes: ["id"],
       order: [[Message, "createdAt", "DESC"]],
       include: [
         { model: Message, order: ["createdAt", "DESC"] },
@@ -85,30 +86,35 @@ router.get("/", async (req, res, next) => {
           attributes: ["id", "username", "photoUrl"],
           required: false
         }
-      ],
-      attributes: ["id", "updatedAt"]
+      ]
     });
 
     for (let i = 0; i < conversations.length; i++) {
-      const data = await Conversation.getPreview(conversations[i].id, userId);
-      const conversationJSON = conversations[i].toJSON();
-      if (conversationJSON.user1) {
-        conversationJSON.otherUser = conversationJSON.user1;
-        delete conversationJSON.user1;
-      } else if (conversationJSON.user2) {
-        conversationJSON.otherUser = conversationJSON.user2;
-        delete conversationJSON.user2;
+      const convo = conversations[i];
+      const unreadCount = await Message.countUnreadMessages(convo.id, userId);
+
+      const convoJSON = convo.toJSON();
+
+      // set a property "otherUser" so that frontend will have easier access
+      if (convoJSON.user1) {
+        convoJSON.otherUser = convoJSON.user1;
+        delete convoJSON.user1;
+      } else if (convoJSON.user2) {
+        convoJSON.otherUser = convoJSON.user2;
+        delete convoJSON.user2;
       }
 
-      if (onlineUsers[conversationJSON.otherUser.id]) {
-        conversationJSON.otherUser.online = true;
+      // set property for online status of the other user
+      if (onlineUsers[convoJSON.otherUser.id]) {
+        convoJSON.otherUser.online = true;
       } else {
-        conversationJSON.otherUser.online = false;
+        convoJSON.otherUser.online = false;
       }
 
-      conversationJSON.latestMessageText = data.latestMessageText;
-      conversationJSON.unreadCount = data.unreadCount;
-      conversations[i] = conversationJSON;
+      // set properties for notification count and latest message preview
+      convoJSON.latestMessageText = convoJSON.messages[0].text;
+      convoJSON.unreadCount = unreadCount;
+      conversations[i] = convoJSON;
     }
 
     res.json(conversations);
