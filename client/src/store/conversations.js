@@ -9,6 +9,7 @@ const READ_MESSAGES = "READ_MESSAGES";
 const ADD_ONLINE_USER = "ADD_ONLINE_USER";
 const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
+const SEARCH = "SEARCH";
 
 const gotConversations = (conversations) => {
   return {
@@ -45,6 +46,13 @@ export const removeOfflineUser = (id) => {
   };
 };
 
+export const search = (users) => {
+  return {
+    type: SEARCH,
+    users
+  };
+};
+
 // add new conversation when sending a new message
 export const addConversation = (newConvo) => {
   return {
@@ -57,6 +65,15 @@ export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
     dispatch(gotConversations(data));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const searchUsers = (searchTerm) => async (dispatch) => {
+  try {
+    const { data } = await axios.get(`/api/users/${searchTerm}`);
+    dispatch(search(data));
   } catch (error) {
     console.error(error);
   }
@@ -97,6 +114,25 @@ export const setMessagesAsRead = (conversationId) => async (dispatch) => {
 
 const reducer = (state = [], action) => {
   switch (action.type) {
+    case SEARCH:
+      const { users } = action;
+      const currentUsers = {};
+
+      // make table of current users so we can lookup faster
+      state.forEach((convo) => {
+        currentUsers[convo.otherUser.id] = true;
+      });
+
+      const newState = [...state];
+      users.forEach((user) => {
+        // only create a fake convo if we don't already have a convo with this user
+        if (!currentUsers[user.id]) {
+          let fakeConvo = { otherUser: user, messages: [] };
+          newState.push(fakeConvo);
+        }
+      });
+
+      return newState;
     case GET_CONVERSATIONS:
       return action.conversations;
     case ADD_CONVERSATION:

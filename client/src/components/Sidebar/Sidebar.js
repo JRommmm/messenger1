@@ -4,7 +4,7 @@ import { Search, Chat, BadgeAvatar } from "./index.js";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { searchUsers } from "../../store/searchedConversations";
+import { searchUsers } from "../../store/conversations";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -48,36 +48,18 @@ const useStyles = makeStyles((theme) => ({
 const Sidebar = (props) => {
   const classes = useStyles();
   const user = props.user || {};
+  let conversations = props.conversations || [];
 
-  const [conversations, setConversations] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    if (props.conversations) {
-      setConversations(props.conversations);
-    }
-  }, [props.conversations]);
-
-  useEffect(() => {
-    setConversations(props.searchedConversations);
-  }, [props.searchedConversations]);
-
-  // search through already loaded convos
-  const handleSearch = (event) => {
-    if (event.target.value === "") {
-      setConversations(props.conversations);
-    } else {
-      setConversations(
-        props.conversations.filter((convo) => {
-          return convo.otherUser.username.toLowerCase().includes(event.target.value.toLowerCase());
-        })
-      );
-    }
+  const handleChange = async (event) => {
+    console.log(event.target.value);
+    await props.searchUsers(event.target.value);
+    setSearchTerm(event.target.value);
   };
 
-  // find a user by username
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    await props.search(event.target.search.value);
   };
 
   return (
@@ -90,10 +72,12 @@ const Sidebar = (props) => {
         </Box>
       </Box>
       <Typography className={classes.chatsTitle}>Chats</Typography>
-      <Search handleSearch={handleSearch} handleSubmit={handleSubmit} />
-      {conversations.map((conversation) => {
-        return <Chat conversation={conversation} key={conversation.otherUser.username} />;
-      })}
+      <Search handleChange={handleChange} handleSubmit={handleSubmit} />
+      {conversations
+        .filter((conversation) => conversation.otherUser.username.includes(searchTerm))
+        .map((conversation) => {
+          return <Chat conversation={conversation} key={conversation.otherUser.username} />;
+        })}
     </Box>
   );
 };
@@ -108,7 +92,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    search: (username) => {
+    searchUsers: (username) => {
       dispatch(searchUsers(username));
     }
   };

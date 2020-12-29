@@ -1,8 +1,8 @@
 const router = require("express").Router();
-const { User } = require("../../db/models");
+const { User, Conversation } = require("../../db/models");
 const { Op } = require("sequelize");
 
-// find users by username, and find coversation if user exists
+// find users by username
 router.get("/:username", async (req, res, next) => {
   try {
     if (!req.user) {
@@ -14,6 +14,9 @@ router.get("/:username", async (req, res, next) => {
       where: {
         username: {
           [Op.substring]: username
+        },
+        id: {
+          [Op.not]: req.user.id
         }
       }
     });

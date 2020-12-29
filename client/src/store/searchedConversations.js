@@ -4,12 +4,12 @@ import store from "../store/index";
 const SEARCH = "SEARCH";
 const REMOVE = "REMOVE";
 
-export const search = (users, currentConvos, onlineUsers) => {
-  return {
-    type: SEARCH,
-    payload: { users, currentConvos, onlineUsers }
-  };
-};
+// export const search = (users, currentConvos) => {
+//   return {
+//     type: SEARCH,
+//     payload: { users, currentConvos }
+//   };
+// };
 
 export const remove = (userId) => {
   return {
@@ -18,23 +18,22 @@ export const remove = (userId) => {
   };
 };
 
-export const searchUsers = (username) => async (dispatch) => {
-  try {
-    const { data } = await axios.get(`/api/users/${username}`);
-    const currentConvos = store.getState().conversations;
-    // const onlineUsers = store.getState().onlineUsers;
-    dispatch(search(data, currentConvos));
-  } catch (error) {
-    console.error(error);
-  }
-};
+// export const searchUsers = (username) => async (dispatch) => {
+//   try {
+//     const { data } = await axios.get(`/api/users/${username}`);
+//     const currentConvos = store.getState().conversations;
+//     dispatch(search(data, currentConvos));
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 const reducer = (state = [], action) => {
   switch (action.type) {
     case SEARCH:
-      const currentConvoUsernames = action.payload.currentConvos.map(
-        (convo) => convo.otherUser.username
-      );
+      // const currentConvoUsernames = action.payload.currentConvos.map(
+      //   (convo) => convo.otherUser.username
+      // );
 
       // const fakeConvos = action.payload.users
       //   .filter((user) => !currentConvoUsernames.includes(user.username))
@@ -45,7 +44,7 @@ const reducer = (state = [], action) => {
       //     return { otherUser: user, messages: [] };
       //   });
 
-      return { ...state };
+      return [];
     case REMOVE: {
       return state.filter((convo) => convo.otherUser.id !== action.userId);
     }
