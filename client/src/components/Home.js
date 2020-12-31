@@ -6,7 +6,7 @@ import { Grid, CssBaseline, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Sidebar } from "./Sidebar";
 import { ActiveChat } from "./ActiveChat";
-import { fetchConversations } from "../store/conversations";
+import { fetchConversations } from "../store/Conversations/conversations";
 import { clearOnLogout } from "../store/index";
 
 const useStyles = makeStyles((theme) => ({

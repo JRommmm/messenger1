@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Typography } from "@material-ui/core";
 import { BadgeAvatar } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
-import { setActiveChat } from "../../store/activeConversation";
-import { setMessagesAsRead } from "../../store/conversations";
+import { setActiveChat } from "../../store/Conversations/activeConversation";
+import { setMessagesAsRead } from "../../store/Conversations/conversations";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({

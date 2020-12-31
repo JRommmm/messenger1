@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { postMessage } from "../../store/conversations";
+import { postMessage } from "../../store/Conversations/conversations";
 
 const useStyles = makeStyles((theme) => ({
   root: {

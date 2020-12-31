@@ -1,6 +1,10 @@
 import io from "socket.io-client";
 import store from "./store";
-import { setNewMessage, removeOfflineUser, addOnlineUser } from "../src/store/conversations";
+import {
+  setNewMessage,
+  removeOfflineUser,
+  addOnlineUser
+} from "./store/Conversations/conversations";
 
 const socket = io(window.location.origin);
 
@@ -14,8 +18,9 @@ socket.on("connect", () => {
   socket.on("remove-offline-user", (id) => {
     store.dispatch(removeOfflineUser(id));
   });
-  socket.on("new-message", (message) => {
-    store.dispatch(setNewMessage(message));
+  socket.on("new-message", (data) => {
+    const userId = store.getState().user.id;
+    store.dispatch(setNewMessage(data.message, userId, data.sender));
   });
 });
 

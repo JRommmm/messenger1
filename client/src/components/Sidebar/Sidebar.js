@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography } from "@material-ui/core";
 import { Search, Chat, BadgeAvatar } from "./index.js";
 import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { searchUsers } from "../../store/conversations";
+import { searchUsers, clearSearchedUsers } from "../../store/Conversations/conversations";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -53,7 +53,17 @@ const Sidebar = (props) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleChange = async (event) => {
-    console.log(event.target.value);
+    if (event.target.value === "") {
+      // clear searched convos from redux store (in the future I should probs cache latest/most frequently searched people?)
+      props.clearSearchedUsers();
+      setSearchTerm("");
+      return;
+    }
+    if (searchTerm.includes(event.target.value)) {
+      // if new value is included in search term, we don't need to make another API call, just need to set the search term value so the conversations can be filtered int he rendering
+      setSearchTerm(event.target.value);
+      return;
+    }
     await props.searchUsers(event.target.value);
     setSearchTerm(event.target.value);
   };
@@ -85,8 +95,7 @@ const Sidebar = (props) => {
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    conversations: state.conversations,
-    searchedConversations: state.searchedConversations
+    conversations: state.conversations
   };
 };
 
@@ -94,6 +103,9 @@ const mapDispatchToProps = (dispatch) => {
   return {
     searchUsers: (username) => {
       dispatch(searchUsers(username));
+    },
+    clearSearchedUsers: () => {
+      dispatch(clearSearchedUsers());
     }
   };
 };
