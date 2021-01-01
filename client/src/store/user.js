@@ -1,8 +1,12 @@
 import axios from "axios";
 import socket from "../socket";
 
+// ACTIONS
+
 const GET_USER = "GET_USER";
 const SET_FETCHING_STATUS = "SET_FETCHING_STATUS";
+
+// ACTION CREATORS
 
 const gotUser = (user) => {
   return {
@@ -15,6 +19,8 @@ const setFetchingStatus = (isFetching) => ({
   type: SET_FETCHING_STATUS,
   isFetching
 });
+
+// THUNK CREATORS
 
 export const fetchUser = () => async (dispatch) => {
   dispatch(setFetchingStatus(true));
@@ -62,6 +68,8 @@ export const logout = (id) => async (dispatch) => {
     console.error(error);
   }
 };
+
+// REDUCER
 
 const initialState = {
   isFetching: true

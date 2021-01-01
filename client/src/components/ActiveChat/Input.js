@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { FormControl, FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-import { postMessage } from "../../store/Conversations/conversations";
+import { postMessage } from "../../store/Conversations/thunkCreators";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   root: {
     justifySelf: "flex-end",
     marginTop: 15

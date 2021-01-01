@@ -4,9 +4,9 @@ import { connect } from "react-redux";
 import { logout } from "../store/user";
 import { Grid, CssBaseline, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { Sidebar } from "./Sidebar";
+import { SidebarContainer } from "./Sidebar";
 import { ActiveChat } from "./ActiveChat";
-import { fetchConversations } from "../store/Conversations/conversations";
+import { fetchConversations } from "../store/Conversations/thunkCreators";
 import { clearOnLogout } from "../store/index";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,7 +48,7 @@ const Home = (props) => {
       </Button>
       <Grid container component="main" className={classes.root}>
         <CssBaseline />
-        <Sidebar />
+        <SidebarContainer />
         <ActiveChat />
       </Grid>
     </>

@@ -1,26 +1,26 @@
-import axios from "axios";
-import socket from "../../socket";
 import {
   addNewConvoToStore,
   addOnlineUserToStore,
   addSearchedUsersToStore,
   readMessagesInStore,
   removeOfflineUserFromStore,
-  setMessageToStore
-} from "./helperFunctions";
+  addMessageToStore
+} from "./reducerFunctions";
+
+// ACTIONS
 
 const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 const SET_MESSAGE = "SET_MESSAGE";
 const READ_MESSAGES = "READ_MESSAGES";
 const ADD_ONLINE_USER = "ADD_ONLINE_USER";
 const REMOVE_OFFLINE_USER = "REMOVE_OFFLINE_USER";
-const SEARCH = "SEARCH";
+const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
 
 // ACTION CREATORS
 
-const gotConversations = (conversations) => {
+export const gotConversations = (conversations) => {
   return {
     type: GET_CONVERSATIONS,
     conversations
@@ -34,7 +34,7 @@ export const setNewMessage = (message, userId, sender) => {
   };
 };
 
-const readMessages = (conversationId) => {
+export const setMessagesAsRead = (conversationId) => {
   return {
     type: READ_MESSAGES,
     conversationId
@@ -55,9 +55,9 @@ export const removeOfflineUser = (id) => {
   };
 };
 
-export const search = (users) => {
+export const setSearchedUsers = (users) => {
   return {
-    type: SEARCH,
+    type: SET_SEARCHED_USERS,
     users
   };
 };
@@ -76,56 +76,6 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
-// THUNK CREATORS
-
-export const fetchConversations = () => async (dispatch) => {
-  try {
-    const { data } = await axios.get("/api/conversations");
-    dispatch(gotConversations(data));
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-// message format to send: {recipientId, text, conversationId}
-// conversationId will be set to null if its a brand new conversation
-export const postMessage = (message, userId) => async (dispatch) => {
-  try {
-    const { data } = await axios.post("/api/messages", message);
-    if (!message.conversationId) {
-      dispatch(addConversation(message.recipientId, data.message));
-    } else {
-      dispatch(setNewMessage(data.message, userId));
-    }
-
-    socket.emit("new-message", {
-      message: data.message,
-      recipientId: message.recipientId,
-      sender: data.sender
-    });
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const setMessagesAsRead = (conversationId) => async (dispatch) => {
-  try {
-    await axios.put("/api/conversations/read", { conversationId });
-    dispatch(readMessages(conversationId));
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const searchUsers = (searchTerm) => async (dispatch) => {
-  try {
-    const { data } = await axios.get(`/api/users/${searchTerm}`);
-    dispatch(search(data));
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 // REDUCER
 
 const reducer = (state = [], action) => {
@@ -133,7 +83,7 @@ const reducer = (state = [], action) => {
     case GET_CONVERSATIONS:
       return action.conversations;
     case SET_MESSAGE:
-      return setMessageToStore(state, action.payload);
+      return addMessageToStore(state, action.payload);
     case READ_MESSAGES: {
       return readMessagesInStore(state, action.conversationId);
     }
@@ -143,7 +93,7 @@ const reducer = (state = [], action) => {
     case REMOVE_OFFLINE_USER: {
       return removeOfflineUserFromStore(state, action.id);
     }
-    case SEARCH:
+    case SET_SEARCHED_USERS:
       return addSearchedUsersToStore(state, action.users);
     case CLEAR_SEARCHED_USERS:
       return state.filter((convo) => convo.id);

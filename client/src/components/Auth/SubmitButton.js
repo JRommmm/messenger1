@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import { REGISTER, LOGIN } from "../../constants";
+import { LOGIN } from "../../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -26,16 +26,8 @@ const SubmitButton = (props) => {
   const classes = useStyles();
   const { authType } = props;
 
-  let text = "";
-  let buttonClass = "";
-  if (authType === LOGIN) {
-    text = "Login";
-    buttonClass = "login";
-  }
-  if (authType === REGISTER) {
-    text = "Create";
-    buttonClass = "create";
-  }
+  const text = authType === LOGIN ? "Login" : "Create";
+  const buttonClass = authType === LOGIN ? "login" : "create";
 
   return (
     <Button

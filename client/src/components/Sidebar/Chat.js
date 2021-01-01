@@ -1,9 +1,9 @@
 import React from "react";
-import { Box, Typography } from "@material-ui/core";
-import { BadgeAvatar } from "../Sidebar";
+import { Box } from "@material-ui/core";
+import { BadgeAvatar, ChatContent } from "../Sidebar";
 import { makeStyles } from "@material-ui/core/styles";
 import { setActiveChat } from "../../store/Conversations/activeConversation";
-import { setMessagesAsRead } from "../../store/Conversations/conversations";
+import { readMessages } from "../../store/Conversations/thunkCreators";
 import { connect } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
@@ -17,68 +17,20 @@ const useStyles = makeStyles((theme) => ({
     "&:hover": {
       cursor: "grab"
     }
-  },
-  container: {
-    display: "flex",
-    justifyContent: "space-between",
-    marginLeft: 20,
-    flexGrow: 1
-  },
-  username: {
-    fontWeight: "bold",
-    letterSpacing: -0.2
-  },
-  typing: {
-    fontSize: 12,
-    color: "#94A6C4",
-    letterSpacing: -0.2,
-    fontStyle: "italic"
-  },
-  unread: {
-    fontSize: 12,
-    letterSpacing: -0.17,
-    fontWeight: "bold"
-  },
-  read: {
-    fontSize: 12,
-    color: "#9CADC8",
-    letterSpacing: -0.17
-  },
-  notification: {
-    height: 20,
-    width: 20,
-    backgroundColor: "#3F92FF",
-    marginRight: 10,
-    color: "white",
-    fontSize: 10,
-    letterSpacing: -0.5,
-    fontWeight: "bold",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10
   }
 }));
 
 const Chat = (props) => {
   const classes = useStyles();
-  const { conversation } = props;
-  const { latestMessageText, otherUser } = conversation;
+  const { conversation, readMessages } = props;
+  const { otherUser } = conversation;
 
   const handleClick = async (conversation) => {
     await props.setActiveChat(conversation.otherUser.username);
-    // set unread messages to read once chat loads
     if (conversation.unreadCount > 0) {
-      await props.setMessagesAsRead(conversation.id);
+      await readMessages(conversation.id);
     }
   };
-
-  let previewTextClass = "";
-  if (conversation.unreadCount > 0) {
-    previewTextClass = classes.unread;
-  } else {
-    previewTextClass = classes.read;
-  }
 
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
@@ -88,15 +40,7 @@ const Chat = (props) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <Box className={classes.container}>
-        <Box className={classes.textContainer}>
-          <Typography className={classes.username}>{otherUser.username}</Typography>
-          <Typography className={previewTextClass}>{latestMessageText}</Typography>
-        </Box>
-        {conversation.unreadCount > 0 && (
-          <Box className={classes.notification}>{conversation.unreadCount}</Box>
-        )}
-      </Box>
+      <ChatContent conversation={conversation} />
     </Box>
   );
 };
@@ -106,8 +50,8 @@ const mapDispatchToProps = (dispatch) => {
     setActiveChat: (id) => {
       dispatch(setActiveChat(id));
     },
-    setMessagesAsRead: (id) => {
-      dispatch(setMessagesAsRead(id));
+    readMessages: (id) => {
+      dispatch(readMessages(id));
     }
   };
 };

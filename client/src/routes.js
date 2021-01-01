@@ -6,7 +6,7 @@ import { Auth } from "./components/Auth";
 import { Home, SnackbarError } from "./components";
 import { LOGIN, REGISTER } from "./constants";
 
-const Loading = (props) => {
+const Loading = () => {
   return <div>Loading</div>;
 };
 

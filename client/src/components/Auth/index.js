@@ -3,5 +3,7 @@ export { default as AuthNav } from "./AuthNav";
 export { default as FormContainer } from "./FormContainer";
 export { default as FormLabel } from "./FormLabel";
 export { default as LoginForm } from "./LoginForm";
+export { default as NavButton } from "./NavButton";
 export { default as RegisterForm } from "./RegisterForm";
+export { default as SideImage } from "./SideImage";
 export { default as SubmitButton } from "./SubmitButton";

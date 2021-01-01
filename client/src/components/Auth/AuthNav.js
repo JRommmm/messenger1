@@ -1,7 +1,7 @@
 import React from "react";
-import { makeStyles, Typography, Button } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
-import { REGISTER, LOGIN } from "../../constants";
+import { makeStyles, Typography, Box } from "@material-ui/core";
+import { NavButton } from "./index";
+import { LOGIN } from "../../constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,58 +14,21 @@ const useStyles = makeStyles((theme) => ({
   greyText: {
     color: theme.palette.secondary.main,
     fontSize: 14
-  },
-  button: {
-    color: theme.palette.primary.main,
-    marginLeft: 20,
-    backgroundColor: "white",
-    fontSize: 14,
-    boxShadow: "0 2px 12px 0 rgba(74,106,149,0.20)",
-    borderRadius: 5,
-    height: 54
-  },
-  login: {
-    width: 140,
-    marginLeft: 32
-  },
-  create: {
-    width: 170,
-    marginLeft: 30
   }
 }));
 
 const AuthNav = (props) => {
   const classes = useStyles();
-  const history = useHistory();
-
   const { authPage } = props;
 
-  let text = "";
-  let buttonText = "";
-  let route = "";
-  let buttonClass = "";
-  if (authPage === REGISTER) {
-    text = "Already have an account?";
-    buttonText = "Login";
-    route = "/login";
-    buttonClass = "login";
-  }
-  if (authPage === LOGIN) {
-    text = "Don't have an account?";
-    buttonText = "Create Account";
-    route = "/register";
-    buttonClass = "create";
-  }
+  const text = authPage === LOGIN ? "Don't have an account?" : "Already have an account?";
 
   return (
-    <div className={classes.root}>
+    <Box className={classes.root}>
       <Typography className={classes.greyText}>{text}</Typography>
-      <Button
-        className={`${classes.button} ${classes[buttonClass]}`}
-        onClick={() => history.push(`${route}`)}>
-        {buttonText}
-      </Button>
-    </div>
+      <NavButton authPage={authPage} />
+    </Box>
   );
 };
+
 export default AuthNav;
