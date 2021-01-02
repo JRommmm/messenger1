@@ -5,7 +5,7 @@ import {
   readMessagesInStore,
   removeOfflineUserFromStore,
   addMessageToStore
-} from "./reducerFunctions";
+} from "./utils/reducerFunctions";
 
 // ACTIONS
 

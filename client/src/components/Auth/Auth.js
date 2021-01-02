@@ -5,7 +5,7 @@ import { CssBaseline, Grid, Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { FormContainer, SideImage, AuthNav } from "../Auth";
 import { REGISTER } from "../../constants";
-import { register, login } from "../../store/user";
+import { register, login } from "../../store/utils/thunkCreators";
 
 const useStyles = makeStyles(() => ({
   root: {

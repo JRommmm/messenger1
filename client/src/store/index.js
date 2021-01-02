@@ -3,8 +3,8 @@ import loggerMiddleware from "redux-logger";
 import thunkMiddleware from "redux-thunk";
 
 import user from "./user";
-import conversations from "./Conversations/conversations";
-import activeConversation from "./Conversations/activeConversation";
+import conversations from "./conversations";
+import activeConversation from "./activeConversation";
 
 const CLEAR_ON_LOGOUT = "CLEAR_ON_LOGOUT";
 
