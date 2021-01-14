@@ -1,3 +1,19 @@
+# Messenger
+
+A one-to-one realtime chat app. 
+
+![demo](https://github.com/valerieingmann/messenger1/blob/main/messenger.gif)
+
+## Technologies
+- React
+- Redux
+- Material-UI (followed a Sketch spec)
+- Socket.io
+- Node.js
+- Express
+- PostgreSQL & Sequelize
+- Passport.js & express-session
+
 ## Running Application Locally
 
 ```
